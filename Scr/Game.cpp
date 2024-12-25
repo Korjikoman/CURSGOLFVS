@@ -1,10 +1,9 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "GameObject.h"
 #include "Map.h"
+#include "Entity.h"
 
-
-GameObject* ball;
+Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
@@ -45,7 +44,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     {
         isRunning = false;
     }
-    ball = new GameObject("assets/ball.png",  0, 0);
+    ball = new Entity(Vector2f(0, 0), TextureManager::LoadTexture("assets/player.png"));
     map = new Map();
 }
 

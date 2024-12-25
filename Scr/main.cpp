@@ -13,7 +13,7 @@ SDL_Renderer *renderer = nullptr;
 Game *game = nullptr;
 int main(int, char **)
 {
-    const int FPS = 60;
+    const int FPS = 144;
     const int frameDelay = 1000 / FPS;
 
     Uint32 frameStart;

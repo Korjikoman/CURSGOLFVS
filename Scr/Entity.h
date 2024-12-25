@@ -22,9 +22,10 @@ public:
 	
 	void setPos(float x, float y);
 	void setScale(float w, float h);
+	void Renderer();
 	void setAngle(float angle);
 	SDL_Texture* getTex();
-	void update(double deltaTime);
+	void Update();
 	SDL_Rect getCurrentFrame();
 private:
 	Vector2f pos;
@@ -32,4 +33,5 @@ private:
 	Vector2f scale = Vector2f(1, 1);
 	SDL_Rect currentFrame;
 	SDL_Texture* tex;
+	SDL_Rect srcRect, destRect;
 };
