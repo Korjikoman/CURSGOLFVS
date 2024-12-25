@@ -20,7 +20,7 @@ int main(int, char **)
     int frameTime;
 
     game = new Game();
-    game->init("Fuck", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+    game->init("TUSA", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false);
     while (game->running())
     {
         frameStart = SDL_GetTicks();
