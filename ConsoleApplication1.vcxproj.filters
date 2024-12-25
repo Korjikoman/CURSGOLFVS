@@ -30,6 +30,18 @@
     <ClCompile Include="Scr\Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scr\Ball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scr\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scr\Tile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scr\Hole.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Game.h">
@@ -44,11 +56,30 @@
     <ClInclude Include="Scr\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scr\Ball.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\Hole.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\Tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
     <None Include=".gitignore" />
     <None Include=".gitattributes" />
+    <None Include="libpng16-16.dll" />
+    <None Include="SDL2.dll" />
+    <None Include="SDL2_image.dll" />
+    <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\ball.png">
@@ -66,5 +97,70 @@
     <Image Include="assets\water.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\gfx\ball.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\ball_shadow.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\bg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\click2start.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\end.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\endscreen_overlay.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\hole.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\levelText_bg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\point.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\powermeter_bg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\powermeter_fg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\powermeter_overlay.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\splashBg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\tile32_dark.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\tile32_light.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\tile64_dark.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\tile64_light.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\gfx\UI_bg.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\sfx\charge.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="assets\sfx\hole.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="assets\sfx\swing.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

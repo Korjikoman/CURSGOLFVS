@@ -4,7 +4,7 @@
 #include "Map.h"
 
 
-GameObject* player;
+GameObject* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
@@ -45,7 +45,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     {
         isRunning = false;
     }
-    player = new GameObject("assets/player.png",  0, 0);
+    ball = new GameObject("assets/ball.png",  0, 0);
     map = new Map();
 }
 
@@ -66,7 +66,7 @@ void Game::handleEvents()
 
 void Game::update()
 {
-    player->Update();
+    ball->Update();
 }
 
 void Game::render()
@@ -75,7 +75,7 @@ void Game::render()
  
     map->DrawMap();
 
-    player->Renderer();
+    ball->Renderer();
 
     SDL_RenderPresent(renderer);
 
