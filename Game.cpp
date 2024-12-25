@@ -62,7 +62,7 @@ void Game::handleEvents()
 
 void Game::update()
 {
-
+    counter++;
     destR.h = 64;
     destR.w = 64;
     destR.x = counter;
