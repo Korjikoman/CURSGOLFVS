@@ -61,6 +61,8 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<Ball>();
 }
+bool mouseDown = false;
+bool mousePressed = false;
 
 void Game::handleEvents()
 {
@@ -71,10 +73,30 @@ void Game::handleEvents()
     case SDL_QUIT:
         isRunning = false;
         break;
-
+    case SDL_MOUSEBUTTONDOWN :
+        if (event.button.button == SDL_BUTTON_LEFT)
+        {
+            mouseDown = true;
+            mousePressed = true;
+        }
+        break;
+    case SDL_MOUSEBUTTONUP:
+        if (event.button.button == SDL_BUTTON_LEFT)
+        {
+            mouseDown = false;
+        }
+        break;
     default:
         break;
     }
+}
+
+bool Game::getMousePressed() {
+    return mousePressed;
+}
+
+bool Game::getMouseDown() {
+    return mouseDown;
 }
 
 void Game::update()
