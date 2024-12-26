@@ -3,7 +3,7 @@
 
 using namespace std;
 
-const int SCREEN_WIDTH = 630;
+const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 630;
 
 SDL_Window *window = nullptr;

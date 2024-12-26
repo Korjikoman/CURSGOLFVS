@@ -6,7 +6,7 @@ public:
 	Map();
 	~Map();
 
-	void LoadMap(int arr[20][25]);
+	void LoadMap(int arr[31][30]);
 	void DrawMap();
 
 private:
@@ -17,6 +17,6 @@ private:
 	SDL_Texture* water;
 	SDL_Texture* wall;
 
-	int map[20][25];
+	int map[31][30];
 
 };

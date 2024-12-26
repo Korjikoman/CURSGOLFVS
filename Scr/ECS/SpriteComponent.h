@@ -3,6 +3,7 @@
 #include "Components.h"
 
 #include "SDL.h"
+#include "../TextureManager.h"
 
 class SpriteComponent : public Component
 {
@@ -22,7 +23,7 @@ public:
 		transform = &entity->getComponent<TransformComponent>();
 		srcRect.x = srcRect.y = 0;
 		srcRect.w = srcRect.h = 32;
-		destRect.w = destRect.h = 64;
+		destRect.w = destRect.h = 32;
 
 	}
 

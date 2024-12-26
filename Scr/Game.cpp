@@ -4,6 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
+#include "Ball.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -11,6 +12,8 @@ SDL_Renderer* Game::renderer = nullptr;
 Map* map;
 
 Manager manager;
+SDL_Event Game::event;
+
 auto& newPlayer(manager.addEntity());
 
 
@@ -56,11 +59,12 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     newPlayer.addComponent<TransformComponent>();
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
+    newPlayer.addComponent<Ball>();
 }
 
 void Game::handleEvents()
 {
-    SDL_Event event;
+    
     SDL_PollEvent(&event);
     switch (event.type)
     {
