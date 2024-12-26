@@ -3,10 +3,17 @@
 #include "Map.h"
 #include "Entity.h"
 
+#include "ECS.h"
+#include "Components.h"
+
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
+
+Manager manager;
+auto& newPlayer(manager.addEntity());
+
 
 Game::Game()
 {
@@ -44,8 +51,10 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     {
         isRunning = false;
     }
-    ball = new Entity(Vector2f(0, 0), TextureManager::LoadTexture("assets/player.png"));
+    //ball = new Entity(Vector2f(0, 0), TextureManager::LoadTexture("assets/player.png"));
     map = new Map();
+    newPlayer.addComponent<PositionComponent>();
+    newPlayer.getComponent<PositionComponent>().setPos(500,500);
 }
 
 void Game::handleEvents()
@@ -65,7 +74,11 @@ void Game::handleEvents()
 
 void Game::update()
 {
-    ball->Update();
+    //ball->Update();
+
+    manager.update();
+    std::cout << newPlayer.getComponent<PositionComponent>().x() << " , " << newPlayer.getComponent<PositionComponent>().y() << std::endl;
+
 }
 
 void Game::render()
@@ -74,7 +87,7 @@ void Game::render()
  
     map->DrawMap();
 
-    ball->Renderer();
+    //ball->Renderer();
 
     SDL_RenderPresent(renderer);
 
