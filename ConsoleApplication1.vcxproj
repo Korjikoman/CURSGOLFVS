@@ -30,8 +30,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Ball.h" />
-    <ClInclude Include="Scr\Components.h" />
-    <ClInclude Include="Scr\ECS.h" />
+    <ClInclude Include="Scr\ECS\Components.h" />
+    <ClInclude Include="Scr\ECS\ECS.h" />
+    <ClInclude Include="Scr\ECS\PositionComponent.h" />
+    <ClInclude Include="Scr\ECS\SpriteComponent.h" />
     <ClInclude Include="Scr\Entity.h" />
     <ClInclude Include="Scr\Game.h" />
     <ClInclude Include="Scr\Hole.h" />
