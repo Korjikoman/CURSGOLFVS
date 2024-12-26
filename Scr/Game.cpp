@@ -55,8 +55,8 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    newPlayer.addComponent<PositionComponent>(200,500);
-    newPlayer.addComponent<SpriteComponent>("assets/player.png");
+    newPlayer.addComponent<PositionComponent>(0,0);
+    newPlayer.addComponent<SpriteComponent>("assets/ball.png");
 }
 
 void Game::handleEvents()

@@ -2,10 +2,10 @@
 #include "TextureManager.h"
 
 int lvl1[20][25] = {
-	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-	{ 0, 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0, 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0, 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 	{ 0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
@@ -27,6 +27,7 @@ int lvl1[20][25] = {
 Map::Map()
 {
 	grass = TextureManager::LoadTexture("assets/grass.png");
+	grass1 = TextureManager::LoadTexture("assets/grass1.png");
 	water = TextureManager::LoadTexture("assets/water.png");
 	wall = TextureManager::LoadTexture("assets/wall.png");
 
@@ -63,10 +64,10 @@ void Map::DrawMap()
 
 			switch (type) {
 			case 0:
-				TextureManager::Draw(water, src, dest);
+				TextureManager::Draw(grass, src, dest);
 				break;
 			case 1:
-				TextureManager::Draw(grass, src, dest);
+				TextureManager::Draw(grass1, src, dest);
 				break;
 			case 2:
 				TextureManager::Draw(wall, src, dest);
