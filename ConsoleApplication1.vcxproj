@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scr\Ball.cpp" />
-    <ClCompile Include="Scr\Entity.cpp" />
     <ClCompile Include="Scr\Game.cpp" />
     <ClCompile Include="Scr\Hole.cpp" />
     <ClCompile Include="Scr\main.cpp" />
@@ -34,7 +33,6 @@
     <ClInclude Include="Scr\ECS\ECS.h" />
     <ClInclude Include="Scr\ECS\PositionComponent.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />
-    <ClInclude Include="Scr\Entity.h" />
     <ClInclude Include="Scr\Game.h" />
     <ClInclude Include="Scr\Hole.h" />
     <ClInclude Include="Scr\Map.h" />
