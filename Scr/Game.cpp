@@ -2,7 +2,6 @@
 #include "TextureManager.h"
 #include "Map.h"
 
-
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
 
@@ -55,7 +54,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    newPlayer.addComponent<PositionComponent>(0,0);
+    newPlayer.addComponent<TransformComponent>();
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
 }
 

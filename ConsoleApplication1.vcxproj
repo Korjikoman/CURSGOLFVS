@@ -26,19 +26,20 @@
     <ClCompile Include="Scr\Map.cpp" />
     <ClCompile Include="Scr\TextureManager.cpp" />
     <ClCompile Include="Scr\Tile.cpp" />
+    <ClCompile Include="Scr\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Ball.h" />
     <ClInclude Include="Scr\ECS\Components.h" />
     <ClInclude Include="Scr\ECS\ECS.h" />
-    <ClInclude Include="Scr\ECS\PositionComponent.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />
+    <ClInclude Include="Scr\ECS\TransformComponent.h" />
     <ClInclude Include="Scr\Game.h" />
     <ClInclude Include="Scr\Hole.h" />
     <ClInclude Include="Scr\Map.h" />
-    <ClInclude Include="Scr\Math.h" />
     <ClInclude Include="Scr\TextureManager.h" />
     <ClInclude Include="Scr\Tile.h" />
+    <ClInclude Include="Scr\Vector2D.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitattributes" />

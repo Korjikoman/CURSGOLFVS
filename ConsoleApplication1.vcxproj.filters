@@ -36,6 +36,9 @@
     <ClCompile Include="Scr\Hole.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scr\Vector2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Game.h">
@@ -50,9 +53,6 @@
     <ClInclude Include="Scr\Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\Math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scr\Hole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,10 +65,13 @@
     <ClInclude Include="Scr\ECS\ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\ECS\PositionComponent.h">
+    <ClInclude Include="Scr\ECS\SpriteComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\ECS\SpriteComponent.h">
+    <ClInclude Include="Scr\ECS\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\Vector2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
