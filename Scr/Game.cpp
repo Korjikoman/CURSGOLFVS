@@ -64,6 +64,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     newHole.addComponent<TransformComponent>(800.0f, 300.0f);
     newHole.addComponent<SpriteComponent>("assets/hole.png");
+    newHole.addComponent<Hole>();
     auto& hole = newHole.getComponent<Hole>();
     hole.setPlayer(&newPlayer);
 }
