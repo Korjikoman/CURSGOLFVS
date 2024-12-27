@@ -1,8 +1,9 @@
+#pragma once
 #include "../Game.h"
 #include "ECS.h"
 #include "Components.h"
 
-class Ball : public Component
+class BallMechanic : public Component
 {
 public:
 
@@ -109,7 +110,10 @@ public:
 			}
 			break;
 		}
-
+	}
+	Vector2D getPos()
+	{
+		return transform->position;
 	}
 };
 

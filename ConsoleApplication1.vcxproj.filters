@@ -50,12 +50,6 @@
     <ClInclude Include="Scr\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\Ball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scr\Hole.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scr\Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,6 +66,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scr\Vector2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\ECS\BallMechanic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\ECS\ColiderComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\ECS\Hole.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

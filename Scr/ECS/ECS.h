@@ -51,6 +51,8 @@ public:
 		for (auto& c : components) c->draw();
 
 	}
+
+
 	bool isActive() { return active; }
 	void destroy() { active = false; }
 

@@ -41,8 +41,10 @@ public:
 			velocity.x += acceleration.x;
 			velocity.y += acceleration.y;
 		}
+		
 			
 	}
+
 
 	void setPos(int x, int y)
 	{

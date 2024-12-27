@@ -4,7 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
-#include "ECS/BallMechanic.h"
+
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -15,6 +15,7 @@ Manager manager;
 SDL_Event Game::event;
 
 auto& newPlayer(manager.addEntity());
+auto& newHole(manager.addEntity());
 
 
 Game::Game()
@@ -59,7 +60,12 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     newPlayer.addComponent<TransformComponent>();
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
-    newPlayer.addComponent<Ball>();
+    newPlayer.addComponent<BallMechanic>();
+
+    newHole.addComponent<TransformComponent>(800.0f, 300.0f);
+    newHole.addComponent<SpriteComponent>("assets/hole.png");
+    auto& hole = newHole.getComponent<Hole>();
+    hole.setPlayer(&newPlayer);
 }
 bool mouseDown = false;
 bool mousePressed = false;
