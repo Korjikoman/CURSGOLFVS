@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scr\Ball.cpp" />
+    <ClCompile Include="Scr\Collision.cpp" />
     <ClCompile Include="Scr\Game.cpp" />
     <ClCompile Include="Scr\Hole.cpp" />
     <ClCompile Include="Scr\main.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="Scr\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scr\Collision.h" />
     <ClInclude Include="Scr\ECS\BallMechanic.h" />
     <ClInclude Include="Scr\ECS\ColiderComponent.h" />
     <ClInclude Include="Scr\ECS\Components.h" />

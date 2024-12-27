@@ -4,7 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
-
+#include "Collision.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -15,8 +15,8 @@ Manager manager;
 SDL_Event Game::event;
 
 auto& newPlayer(manager.addEntity());
-auto& newHole(manager.addEntity());
-
+auto& hole(manager.addEntity());
+auto& wall(manager.addEntity());
 
 Game::Game()
 {
@@ -61,12 +61,16 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     newPlayer.addComponent<TransformComponent>();
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<BallMechanic>();
+    newPlayer.addComponent<ColliderComponent>("Player");
 
-    newHole.addComponent<TransformComponent>(800.0f, 300.0f);
-    newHole.addComponent<SpriteComponent>("assets/hole.png");
-    newHole.addComponent<Hole>();
-    auto& hole = newHole.getComponent<Hole>();
-    hole.setPlayer(&newPlayer);
+    wall.addComponent<TransformComponent>(400.0f, 400.0f, 40, 20, 1);
+    wall.addComponent<SpriteComponent>("assets/wall.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    hole.addComponent<TransformComponent>(800.0f, 200.0f, 40, 40, 1);
+    hole.addComponent<SpriteComponent>("assets/hole.png");
+    hole.addComponent<ColliderComponent>("wall");
+    
 }
 bool mouseDown = false;
 bool mousePressed = false;
@@ -111,6 +115,19 @@ void Game::update()
     manager.refresh();
     manager.update();
 
+    if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
+        wall.getComponent<ColliderComponent>().collider))
+    {
+        std::cout << "Wall Hit!" << std::endl;
+    }
+    if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
+        hole.getComponent<ColliderComponent>().collider))
+    {
+        newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
+        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+    }
 }
 
 void Game::render()

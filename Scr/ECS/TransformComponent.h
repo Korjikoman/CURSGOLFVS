@@ -17,11 +17,18 @@ public:
 	int scale = 1;
 
 
-	TransformComponent() {
+	TransformComponent() 
+	{
 		position.x = 200.0f;
 		position.y = 200.0f;
 	}
 
+	TransformComponent(int sc) 
+	{
+		position.x = 200.0f;
+		position.y = 200.0f;
+		scale = sc;
+	}
 	TransformComponent(float x, float y)
 	{
 		position.x = x;
@@ -29,6 +36,14 @@ public:
 
 	}
 
+	TransformComponent(float x, float y, int h, int w, int sc)
+	{
+		position.x = x;
+		position.y = y;
+		height = h;
+		width = w;
+		scale = sc;
+	}
 
 	void update() override
 	{

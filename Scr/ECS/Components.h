@@ -4,3 +4,4 @@
 #include "SpriteComponent.h"
 #include "ECS/BallMechanic.h"
 #include "ECS/Hole.h"
+#include "ColiderComponent.h"
