@@ -8,10 +8,13 @@ public:
 
 	Vector2D position;
 	Vector2D velocity;
-	
+	Vector2D acceleration;
+
 	int speed;
 
-	Vector2D acceleration;
+	int height = 32;
+	int width = 32;
+	int scale = 1;
 
 
 	TransformComponent() {
@@ -29,7 +32,7 @@ public:
 
 	void update() override
 	{
-		if (abs(velocity.x) > 0.0f && abs(velocity.y) > 0.0f)
+		if (abs(velocity.x) > 0.002f && abs(velocity.y) > 0.002f)
 		{
 			position.x += velocity.x;
 			position.y += velocity.y;

@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\ECS\BallMechanic.h" />
+    <ClInclude Include="Scr\ECS\ColiderComponent.h" />
     <ClInclude Include="Scr\ECS\Components.h" />
     <ClInclude Include="Scr\ECS\ECS.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />
