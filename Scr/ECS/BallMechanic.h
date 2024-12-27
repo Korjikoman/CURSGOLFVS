@@ -99,12 +99,13 @@ public:
 				SDL_GetMouseState(&mouseX, &mouseY);
 				
 				// задаем вектор скорости
-				setVelocity((mouseX - getInitialMousePos().x) / -150, (mouseY - getInitialMousePos().y) / -150);
+				setVelocity((mouseX - getInitialMousePos().x) / -60, (mouseY - getInitialMousePos().y) / -60);
 				// находим модуль скорости через теорему пифагора (v0)
 				transform->speed = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
-				// a = (0-v0)/t = -v0/t
-				transform->acceleration = transform->speed / 10;
-				std::cout << transform->speed << std::endl;
+				
+				// замедляем шарик при помощи отрицательного ускорения
+				transform->acceleration.x = -transform->velocity.x * 0.002f;
+				transform->acceleration.y = -transform->velocity.y * 0.002f;
 			}
 			break;
 		}
