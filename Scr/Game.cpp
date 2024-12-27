@@ -4,7 +4,7 @@
 
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
-#include "Ball.h"
+#include "ECS/BallMechanic.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;

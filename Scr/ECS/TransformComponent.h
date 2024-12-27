@@ -8,8 +8,9 @@ public:
 
 	Vector2D position;
 	Vector2D velocity;
-
-
+	
+	float acceleration;
+	float speed;
 
 	TransformComponent() {
 		position.x = 200.0f;
@@ -26,8 +27,22 @@ public:
 
 	void update() override
 	{
-		position.x;
-		position.y;
+		if (speed > 0.0f)
+		{
+			position.x += velocity.x * speed;
+			position.y += velocity.y * speed;
+			std::cout << "Position (" << position.x << "; " << position.y << " )\n";
+			std::cout << "VELOCITY (" << velocity.x << "; " << velocity.y << " )\n";
+			std::cout << "Speed" << speed<< std::endl;
+
+			speed -= acceleration * 2;
+		}
+		else
+		{
+			speed = 0;
+			position.x += velocity.x;
+			position.y += velocity.y;
+		}
 	}
 
 	void setPos(int x, int y)

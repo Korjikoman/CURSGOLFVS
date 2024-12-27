@@ -29,7 +29,7 @@
     <ClCompile Include="Scr\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scr\Ball.h" />
+    <ClInclude Include="Scr\ECS\BallMechanic.h" />
     <ClInclude Include="Scr\ECS\Components.h" />
     <ClInclude Include="Scr\ECS\ECS.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />

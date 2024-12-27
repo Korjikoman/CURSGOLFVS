@@ -1,6 +1,6 @@
-#include "Game.h"
-#include "ECS/ECS.h"
-#include "ECS/Components.h"
+#include "../Game.h"
+#include "ECS.h"
+#include "Components.h"
 
 class Ball : public Component
 {
@@ -11,8 +11,9 @@ public:
 	Vector2D launchedVelocity;
 	Vector2D initialMousePos;
 	Vector2D currentMousePos;
-	float velocity1D;
-	float launchedVelocity1D;
+	
+
+	
 	bool canMove = true;
 	bool playedSwingFx = true;
 	int index;
@@ -43,11 +44,11 @@ public:
 		transform->velocity.y = y;
 	}
 
-	void setLaunchedVelocity(float x, float y)
+	/*void setLaunchedVelocity(float x, float y)
 	{
 		launchedVelocity.x = x;
 		launchedVelocity.y = y;
-	}
+	}*/
 
 	void setInitialMousePos(float x, float y)
 	{
@@ -61,6 +62,8 @@ public:
 		currentMousePos.y = y;
 	}
 
+
+	// вектор скорости
 	float getDistance(Vector2D a, Vector2D b) {
 		return SDL_sqrt(SDL_pow(abs(a.x - b.x), 2) + SDL_pow(abs(a.y - b.y), 2));
 	}
@@ -74,19 +77,39 @@ public:
 	{
 		int mouseX = 0;
 		int mouseY = 0;
-		if (mousePressed) //не работает, надо брать переменные из класса game?
+		float length = 0;
+
+		switch (Game::event.type)
 		{
-			SDL_GetMouseState(&mouseX, &mouseY);
-			setInitialMousePos(mouseX, mouseY);
+		case SDL_MOUSEBUTTONDOWN:
+			if (Game::event.button.button == SDL_BUTTON_LEFT)
+			{
+				// находим положение относительно рабочего стола
+				SDL_GetMouseState(&mouseX, &mouseY);
+				// присваиваем эти координаты initialMousePos.x и initialMousePos.y 
+				setInitialMousePos(mouseX, mouseY);
+				std::cout << mouseX << "   ;    " << mouseY << std::endl;
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			if (Game::event.button.button == SDL_BUTTON_LEFT)
+			{
+
+
+				SDL_GetMouseState(&mouseX, &mouseY);
+				
+				// задаем вектор скорости
+				setVelocity((mouseX - getInitialMousePos().x) / -150, (mouseY - getInitialMousePos().y) / -150);
+				// находим модуль скорости через теорему пифагора (v0)
+				transform->speed = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
+				// a = (0-v0)/t = -v0/t
+				transform->acceleration = transform->speed / 10;
+				std::cout << transform->speed << std::endl;
+			}
+			break;
 		}
-		if (mouseDown) {
-			
-			SDL_GetMouseState(&mouseX, &mouseY);
-			setVelocity((mouseX - getInitialMousePos().x) / -150, (mouseY - getInitialMousePos().y) / -150);
-			setLaunchedVelocity((mouseX - getInitialMousePos().x) / -150, (mouseY - getInitialMousePos().y) / -150);
-			velocity1D = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
-			launchedVelocity1D = velocity1D;
-		}
-		
+
 	}
 };
+
+
