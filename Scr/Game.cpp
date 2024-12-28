@@ -142,38 +142,52 @@ void Game::update()
     for (auto cc : colliders)
     {
         if (cc->tag != "ball")
-        if (Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc)) {
-            // ѕолучаем коллайдеры
-            SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
-            SDL_Rect* entity = &cc->collider;
-            // »з них получаем координаты
-            int ballDeltaX = ball->x + ball->w;
-            int ballDeltaY = ball->y + ball->h;
-            
+            if (Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc)) {
+                // ѕолучаем коллайдеры
+                SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
+                SDL_Rect* entity = &cc->collider;
+                if (ball->x < entity->x + entity->w &&
+                    ball->x + ball->w > entity->x &&
+                    ball->y < entity->y + entity->h &&
+                    ball->y + ball->h > entity->y) {
 
-            int entityDeltaX = entity->x + entity->w;
-            int entityDeltaY = entity->y + entity->h;
-            // удар€емс€ сверху
-            if ((ballDeltaY >= entity->y && ball->y < entity->y) || ((entityDeltaY >= ball->y && entity->y < ball->y)))
-            {
-                for (int i = 0; i <= 10; i++)
-                std::cout << "UP OR DOWN\n";
-                newPlayer.getComponent<TransformComponent>().velocity.y *= (-1); // мен€ем вектор y
-                break;
+                    // ќпредел€ем, с какой стороны произошло столкновение
+                    int ballCenterX = ball->x + ball->w / 2;
+                    int ballCenterY = ball->y + ball->h / 2;
+                    int entityCenterX = entity->x + entity->w / 2;
+                    int entityCenterY = entity->y + entity->h / 2;
+
+                    int deltaX = ballCenterX - entityCenterX;
+                    int deltaY = ballCenterY - entityCenterY;
+
+                    int intersectX = (ball->w / 2 + entity->w / 2) - abs(deltaX);
+                    int intersectY = (ball->h / 2 + entity->h / 2) - abs(deltaY);
+
+                    // ≈сли пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                    if (intersectX > intersectY) {
+                        if (deltaY > 0) {
+                            std::cout << "COLLISION FROM TOP\n";
+                            newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        }
+                        else {
+                            std::cout << "COLLISION FROM BOTTOM\n";
+                            newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        }
+                    }
+                    else {
+                        if (deltaX > 0) {
+                            std::cout << "COLLISION FROM LEFT\n";
+                            newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        }
+                        else {
+                            std::cout << "COLLISION FROM RIGHT\n";
+                            newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        }
+                    }
+
+                }
+
             }
-            // если удар€емс€ слева или справа
-            if ((ballDeltaX >= entity->x && ball->x < entity->x) || ((entityDeltaX >= ball->x && entity->x < ball->x)))
-            {
-                for (int i = 0; i<= 10; i++)
-                std::cout << "LEFT OR RIGHT\n";
-
-                newPlayer.getComponent<TransformComponent>().velocity.x *= (-1);
-                break;
-
-            }
-            
-        }
-        
     }
 
    /* if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
