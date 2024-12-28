@@ -83,6 +83,9 @@
     <ClInclude Include="Scr\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scr\ECS\TileComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

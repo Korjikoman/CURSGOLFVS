@@ -37,6 +37,7 @@
     <ClInclude Include="Scr\ECS\ECS.h" />
     <ClInclude Include="Scr\ECS\Hole.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />
+    <ClInclude Include="Scr\ECS\TileComponent.h" />
     <ClInclude Include="Scr\ECS\TransformComponent.h" />
     <ClInclude Include="Scr\Game.h" />
     <ClInclude Include="Scr\Map.h" />

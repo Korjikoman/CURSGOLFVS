@@ -5,3 +5,4 @@
 #include "ECS/BallMechanic.h"
 #include "ECS/Hole.h"
 #include "ColiderComponent.h"
+#include "TileComponent.h"
