@@ -67,7 +67,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    newPlayer.addComponent<TransformComponent>();
+    newPlayer.addComponent<TransformComponent>(100.0f, 200.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<BallMechanic>();
     newPlayer.addComponent<ColliderComponent>("ball");
@@ -76,9 +76,41 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall.addComponent<SpriteComponent>("assets/wall.png");
     wall.addComponent<ColliderComponent>("wall");
 
+    wall.addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
+    wall.addComponent<SpriteComponent>("assets/borderup.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/borderleft.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/borderright.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(32.0f, 598.0f, 32, 896, 1);
+    wall.addComponent<SpriteComponent>("assets/borderdown.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(0.0f, 0.0f, 32, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/border.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(928.0f, 598.0f, 32, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/border.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(928.0f, 0.0f, 32, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/border.png");
+    wall.addComponent<ColliderComponent>("wall");
+
+    wall.addComponent<TransformComponent>(0.0f, 598.0f, 32, 32, 1);
+    wall.addComponent<SpriteComponent>("assets/border.png");
+    wall.addComponent<ColliderComponent>("wall");
+
     hole.addComponent<TransformComponent>(800.0f, 200.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
-    hole.addComponent<ColliderComponent>("wall");
+    hole.addComponent<ColliderComponent>("hole");
   
 
     tile0.addComponent<TileComponent>(200, 200, 32, 32, 0);
@@ -149,7 +181,9 @@ void Game::update()
                 if (ball->x < entity->x + entity->w &&
                     ball->x + ball->w > entity->x &&
                     ball->y < entity->y + entity->h &&
-                    ball->y + ball->h > entity->y) {
+                    ball->y + ball->h > entity->y &&
+                    cc->tag != "hole")
+                {
 
                     // Определяем, с какой стороны произошло столкновение
                     int ballCenterX = ball->x + ball->w / 2;
@@ -168,52 +202,38 @@ void Game::update()
                         if (deltaY > 0) {
                             std::cout << "COLLISION FROM TOP\n";
                             newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                            newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                         }
                         else {
                             std::cout << "COLLISION FROM BOTTOM\n";
                             newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                            newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                         }
                     }
                     else {
                         if (deltaX > 0) {
                             std::cout << "COLLISION FROM LEFT\n";
                             newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                            newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                         }
                         else {
                             std::cout << "COLLISION FROM RIGHT\n";
                             newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                            newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                         }
                     }
 
                 }
+                else if (cc->tag == "hole")
+                {
+                    newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
+                    newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
+                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                }
 
             }
     }
-
-   /* if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
-        wall.getComponent<ColliderComponent>().collider))
-    {
-        
-        int colliderPlace = Collision::AABBplace(newPlayer.getComponent<ColliderComponent>().collider,
-            wall.getComponent<ColliderComponent>().collider);
-        switch (colliderPlace)
-        {
-        case 1:newPlayer.getComponent<TransformComponent>().velocity * -1;
-        default:
-            break;
-        }
-        
-       
-        std::cout << "Wall Hit!" << std::endl;
-    }
-    if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
-        hole.getComponent<ColliderComponent>().collider))
-    {
-        newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
-        newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
-        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-    }*/
 }
 
 void Game::render()
