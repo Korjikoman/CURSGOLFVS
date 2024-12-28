@@ -14,3 +14,10 @@ bool Collision::AABB(const SDL_Rect& recA, const SDL_Rect& recB)
 	}
 	return false;
 }
+int Collision::AABBplace(const SDL_Rect& recA, const SDL_Rect& recB)
+{
+	if (recA.x + recA.w >= recB.x)
+	{
+		return 1;
+	}
+}

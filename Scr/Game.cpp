@@ -63,7 +63,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     newPlayer.addComponent<BallMechanic>();
     newPlayer.addComponent<ColliderComponent>("Player");
 
-    wall.addComponent<TransformComponent>(400.0f, 400.0f, 40, 20, 1);
+    wall.addComponent<TransformComponent>(400.0f, 200.0f, 200, 200, 1);
     wall.addComponent<SpriteComponent>("assets/wall.png");
     wall.addComponent<ColliderComponent>("wall");
 
@@ -118,6 +118,17 @@ void Game::update()
     if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
         wall.getComponent<ColliderComponent>().collider))
     {
+        
+        int colliderPlace = Collision::AABBplace(newPlayer.getComponent<ColliderComponent>().collider,
+            wall.getComponent<ColliderComponent>().collider);
+        switch (colliderPlace)
+        {
+        case 1:newPlayer.getComponent<TransformComponent>().velocity * -1;
+        default:
+            break;
+        }
+        
+       
         std::cout << "Wall Hit!" << std::endl;
     }
     if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider,
