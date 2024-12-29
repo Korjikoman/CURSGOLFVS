@@ -2,6 +2,8 @@
 #include "../Game.h"
 #include "ECS.h"
 #include "Components.h"
+#include <SDL_ttf.h>
+#include <sstream>
 
 class BallMechanic : public Component
 {
@@ -19,8 +21,25 @@ public:
 	int strokes = 0;
 	int dirX = 1;
 	int dirY = 1;
+	float velocityX;
+	float velocityY;
+	float velocityLength;
+
 	bool win = false;
 	float friction = 0.001;
+
+	std::string to_string(int value) {
+		std::stringstream ss;
+		ss << value;
+		return ss.str();
+	}
+
+	template <typename T>
+	T clamp(T value, T min, T max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
 
 	void init() override
 	{
@@ -69,7 +88,7 @@ public:
 
 	void setWin(bool p_win)
 	{
-		win = p_win;
+		Game::win = p_win;
 	}
 
 	void update() override
@@ -88,6 +107,21 @@ public:
 				// присваиваем эти координаты initialMousePos.x и initialMousePos.y 
 				setInitialMousePos(mouseX, mouseY);
 				std::cout << mouseX << "   ;    " << mouseY << std::endl;
+		
+			}
+			break;
+		case SDL_MOUSEMOTION:
+			if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT))
+			{
+				// Обновляем положение мыши и рассчитываем скорость
+				SDL_GetMouseState(&mouseX, &mouseY);
+
+				velocityX = (mouseX - getInitialMousePos().x) / -60.0f;
+				velocityY = (mouseY - getInitialMousePos().y) / -60.0f;
+
+				// Ограничиваем значения скорости
+				velocityX = clamp(velocityX, -5.0f, 5.0f);
+				velocityY = clamp(velocityY, -5.0f, 5.0f);
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
@@ -151,9 +185,19 @@ public:
 				dy /= length;
 			}
 			
+			velocityLength = SDL_sqrt(velocityX * velocityX + velocityY * velocityY);
 			// Длина линии
-			float lineLength = 100.0f;
+			// Минимальная и максимальная длина линии
+			float minLength = 16.0f;
+			float maxLength = 80.0f;
 
+			// Длина линии изменяется в зависимости от скорости мяча
+			float lineLength = minLength + (velocityLength * 20.0f); // Увеличиваем длину в зависимости от скорости
+
+			// Ограничиваем длину линии
+			if (lineLength > maxLength) {
+				lineLength = maxLength;
+			}
 			// Параметры наконечника стрелки
 			float arrowLength = 15.0f; // Длина наконечника стрелки
 			float arrowWidth = 10.0f;  // Ширина наконечника стрелки
@@ -195,7 +239,39 @@ public:
 				static_cast<int>(rightBaseX), static_cast<int>(rightBaseY));
 			SDL_RenderDrawLine(Game::renderer, static_cast<int>(leftBaseX), static_cast<int>(leftBaseY),
 				static_cast<int>(rightBaseX), static_cast<int>(rightBaseY));
+			// Отображение счётчика ударов
+			TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 24);
+			if (!font) {
+				std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
+				return;
+			}
+			else {
+				std::cout << "font int" << std::endl;
+			}
+
+			SDL_Color color = { 0, 0, 0, 255 }; // Чёрный цвет
+			std::string strokesText = "Strokes: " + std::to_string(strokes);
+			SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, strokesText.c_str(), color);
+			SDL_Texture* message = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
+
+			SDL_Rect messageRect; // Указываем расположение текста
+			messageRect.x = 10;   // Положение текста по X
+			messageRect.y = 10;   // Положение текста по Y
+			messageRect.w = surfaceMessage->w;
+			messageRect.h = surfaceMessage->h;
+
+			SDL_RenderCopy(Game::renderer, message, nullptr, &messageRect);
+
+			// Освобождение ресурсов
+			SDL_FreeSurface(surfaceMessage);
+			SDL_DestroyTexture(message);
+			TTF_CloseFont(font);
 		}
+	}
+
+	bool isWin() const
+	{
+		return Game::win; // Проверяем глобальную переменную
 	}
 };
 

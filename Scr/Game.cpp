@@ -5,6 +5,7 @@
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
 #include "Collision.h"
+#include "SDL_ttf.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -13,7 +14,7 @@ Map* map;
 
 Manager manager;
 SDL_Event Game::event;
-
+bool Game::win = false; // Инициализация переменной win
 
 std::vector<ColliderComponent*> Game::colliders;
 
@@ -61,6 +62,10 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     }
     else
     {
+        isRunning = false;
+    }
+    if (TTF_Init() == -1) {
+        std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         isRunning = false;
     }
     map = new Map();

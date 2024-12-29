@@ -24,7 +24,7 @@ public:
     static SDL_Renderer* renderer;
     static SDL_Event event;
     static std::vector<ColliderComponent*> colliders;
-
+    static bool win; // ƒобавл€ем переменную win как статическую
 
 private:
     int counter = 0;
