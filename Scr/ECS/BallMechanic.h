@@ -27,6 +27,9 @@ public:
 
 	bool win = false;
 	float friction = 0.001;
+	bool isMoving = false;  // Флаг для проверки, что мяч двигается
+
+	float stopThreshold = 0.05f;
 
 	std::string to_string(int value) {
 		std::stringstream ss;
@@ -93,74 +96,86 @@ public:
 
 	void update() override
 	{
-		int mouseX = 0;
-		int mouseY = 0;
-		float length = 0;
-
-		switch (Game::event.type)
+		// Проверяем, двигается ли мяч
+		if (SDL_sqrt(transform->velocity.x * transform->velocity.x + transform->velocity.y * transform->velocity.y) > stopThreshold)
 		{
-		case SDL_MOUSEBUTTONDOWN:
-			if (Game::event.button.button == SDL_BUTTON_LEFT)
+			isMoving = true;
+		}
+		else
+		{
+			isMoving = false;
+		}
+
+		if (!isMoving)  // Разрешаем новый удар только если мяч не двигается
+		{
+			int mouseX = 0;
+			int mouseY = 0;
+
+			switch (Game::event.type)
 			{
-				// находим положение относительно рабочего стола
-				SDL_GetMouseState(&mouseX, &mouseY);
-				// присваиваем эти координаты initialMousePos.x и initialMousePos.y 
-				setInitialMousePos(mouseX, mouseY);
-				std::cout << mouseX << "   ;    " << mouseY << std::endl;
-		
+			case SDL_MOUSEBUTTONDOWN:
+				if (Game::event.button.button == SDL_BUTTON_LEFT)
+				{
+					// Находим положение относительно рабочего стола
+					SDL_GetMouseState(&mouseX, &mouseY);
+					// Присваиваем эти координаты initialMousePos.x и initialMousePos.y
+					setInitialMousePos(mouseX, mouseY);
+					std::cout << mouseX << "   ;    " << mouseY << std::endl;
+				}
+				break;
+			case SDL_MOUSEMOTION:
+				if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT))
+				{
+					// Обновляем положение мыши и рассчитываем скорость
+					SDL_GetMouseState(&mouseX, &mouseY);
+
+					velocityX = (mouseX - getInitialMousePos().x) / -60.0f;
+					velocityY = (mouseY - getInitialMousePos().y) / -60.0f;
+
+					// Ограничиваем значения скорости
+					velocityX = clamp(velocityX, -5.0f, 5.0f);
+					velocityY = clamp(velocityY, -5.0f, 5.0f);
+				}
+				break;
+			case SDL_MOUSEBUTTONUP:
+				if (Game::event.button.button == SDL_BUTTON_LEFT)
+				{
+					SDL_GetMouseState(&mouseX, &mouseY);
+					// Задаем вектор скорости
+					setVelocity((mouseX - getInitialMousePos().x) / -60, (mouseY - getInitialMousePos().y) / -60);
+
+					if (transform->velocity.x > 5)
+					{
+						transform->velocity.x = 5;
+					}
+
+					if (transform->velocity.y > 5)
+					{
+						transform->velocity.y = 5;
+					}
+
+					if (transform->velocity.x < -5)
+					{
+						transform->velocity.x = -5;
+					}
+
+					if (transform->velocity.y < -5)
+					{
+						transform->velocity.y = -5;
+					}
+
+					// Находим модуль скорости через теорему Пифагора (v0)
+					transform->speed = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
+
+					// Замедляем шарик при помощи отрицательного ускорения
+					transform->acceleration.x = -transform->velocity.x * 0.002f;
+					transform->acceleration.y = -transform->velocity.y * 0.002f;
+
+					// Увеличиваем количество ударов
+					strokes++;
+				}
+				break;
 			}
-			break;
-		case SDL_MOUSEMOTION:
-			if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT))
-			{
-				// Обновляем положение мыши и рассчитываем скорость
-				SDL_GetMouseState(&mouseX, &mouseY);
-
-				velocityX = (mouseX - getInitialMousePos().x) / -60.0f;
-				velocityY = (mouseY - getInitialMousePos().y) / -60.0f;
-
-				// Ограничиваем значения скорости
-				velocityX = clamp(velocityX, -5.0f, 5.0f);
-				velocityY = clamp(velocityY, -5.0f, 5.0f);
-			}
-			break;
-		case SDL_MOUSEBUTTONUP:
-			if (Game::event.button.button == SDL_BUTTON_LEFT)
-			{
-
-				
-				SDL_GetMouseState(&mouseX, &mouseY);
-				
-				// задаем вектор скорости
-				setVelocity((mouseX - getInitialMousePos().x) / -60, (mouseY - getInitialMousePos().y) / -60);
-				if (transform->velocity.x > 5)
-				{
-					transform->velocity.x = 5;
-				}
-
-				if (transform->velocity.y > 5)
-				{
-					transform->velocity.y = 5;
-				}
-
-				if (transform->velocity.x < -5)
-				{
-					transform->velocity.x = -5;
-				}
-
-				if (transform->velocity.y < -5)
-				{
-					transform->velocity.y = -5;
-				}
-
-				// находим модуль скорости через теорему пифагора (v0)
-				transform->speed = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
-				
-				// замедляем шарик при помощи отрицательного ускорения
-				transform->acceleration.x = -transform->velocity.x * 0.002f;
-				transform->acceleration.y = -transform->velocity.y * 0.002f;
-			}
-			break;
 		}
 	}
 	Vector2D getPos()
@@ -239,33 +254,7 @@ public:
 				static_cast<int>(rightBaseX), static_cast<int>(rightBaseY));
 			SDL_RenderDrawLine(Game::renderer, static_cast<int>(leftBaseX), static_cast<int>(leftBaseY),
 				static_cast<int>(rightBaseX), static_cast<int>(rightBaseY));
-			// Отображение счётчика ударов
-			TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 24);
-			if (!font) {
-				std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
-				return;
-			}
-			else {
-				std::cout << "font int" << std::endl;
-			}
-
-			SDL_Color color = { 0, 0, 0, 255 }; // Чёрный цвет
-			std::string strokesText = "Strokes: " + std::to_string(strokes);
-			SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, strokesText.c_str(), color);
-			SDL_Texture* message = SDL_CreateTextureFromSurface(Game::renderer, surfaceMessage);
-
-			SDL_Rect messageRect; // Указываем расположение текста
-			messageRect.x = 10;   // Положение текста по X
-			messageRect.y = 10;   // Положение текста по Y
-			messageRect.w = surfaceMessage->w;
-			messageRect.h = surfaceMessage->h;
-
-			SDL_RenderCopy(Game::renderer, message, nullptr, &messageRect);
-
-			// Освобождение ресурсов
-			SDL_FreeSurface(surfaceMessage);
-			SDL_DestroyTexture(message);
-			TTF_CloseFont(font);
+			
 		}
 	}
 

@@ -1,5 +1,6 @@
 #pragma once 
 #include "SDL.h"
+#include "SDL_ttf.h"
 #include "SDL_image.h"
 #include <iostream>
 #include <vector>
@@ -25,7 +26,7 @@ public:
     static SDL_Event event;
     static std::vector<ColliderComponent*> colliders;
     static bool win; // ƒобавл€ем переменную win как статическую
-
+    void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
 private:
     int counter = 0;
     bool isRunning;

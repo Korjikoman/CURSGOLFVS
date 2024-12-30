@@ -19,6 +19,8 @@ bool Game::win = false; // Инициализация переменной win
 std::vector<ColliderComponent*> Game::colliders;
 
 
+
+
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
 auto& wall(manager.addEntity());
@@ -235,6 +237,7 @@ void Game::update()
                     newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
                     newPlayer.getComponent<TransformComponent>().velocity.x = 0;
                     newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                    newPlayer.getComponent<BallMechanic>().strokes = 0;
                 }
 
             }
@@ -247,6 +250,12 @@ void Game::render()
  
     map->DrawMap();
     manager.draw();
+    TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 24); // Путь к вашему шрифту, размер шрифта
+    if (!font) {
+        std::cerr << "Не удалось загрузить шрифт: " << TTF_GetError() << std::endl;
+    }
+    std::string strokesText = "Strokes: " + std::to_string(newPlayer.getComponent<BallMechanic>().strokes);
+    renderText(renderer, font, strokesText, 33, 0); // Текст в левом верхнем углу
 
     SDL_RenderPresent(renderer);
 
@@ -259,3 +268,36 @@ void Game::clean()
     SDL_Quit();
     std::cout << "You've exited the game" << std::endl;
 }
+
+void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y)
+{
+    SDL_Color textColor = { 0, 0, 0, 255 }; // Черный цвет текста
+
+    // Создаём поверхность с текстом
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+    if (!surface) {
+        std::cerr << "Failed to create text surface: " << TTF_GetError() << std::endl;
+        return;
+    }
+
+    // Создаём текстуру из поверхности
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
+        SDL_FreeSurface(surface);
+        return;
+    }
+
+    // Устанавливаем размер текста
+    SDL_Rect destRect = { x, y, surface->w, surface->h };
+
+    // Освобождаем поверхность
+    SDL_FreeSurface(surface);
+
+    // Отображаем текстуру
+    SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+
+    // Удаляем текстуру после отрисовки
+    SDL_DestroyTexture(texture);
+}
+
