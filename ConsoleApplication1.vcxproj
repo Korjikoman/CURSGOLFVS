@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Scr\Ball.cpp" />
     <ClCompile Include="Scr\Collision.cpp" />
+    <ClCompile Include="Scr\ECS\ECS.cpp" />
     <ClCompile Include="Scr\Game.cpp" />
     <ClCompile Include="Scr\Hole.cpp" />
     <ClCompile Include="Scr\main.cpp" />

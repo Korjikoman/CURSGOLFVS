@@ -22,11 +22,14 @@ public:
     void clean();
 
     bool running() { return isRunning; }
+
+    static void AddTile(int id, int x, int y);
     static SDL_Renderer* renderer;
     static SDL_Event event;
     static std::vector<ColliderComponent*> colliders;
     static bool win; // ƒобавл€ем переменную win как статическую
     void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
+    void loadLevel(int levelIndex);
 private:
     int counter = 0;
     bool isRunning;

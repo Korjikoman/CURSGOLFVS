@@ -37,8 +37,8 @@ public:
 		if (tag == "hole") {
 			collider.x = static_cast<int>(transform->position.x)+15;
 			collider.y = static_cast<int>(transform->position.y)+15;
-			collider.w = (transform->width * transform->scale)-15;
-			collider.h = (transform->height * transform->scale)-15;
+			collider.w = (transform->width * transform->scale)-30;
+			collider.h = (transform->height * transform->scale)-30;
 		}
 	}
 };

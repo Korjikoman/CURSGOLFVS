@@ -24,11 +24,22 @@ std::vector<ColliderComponent*> Game::colliders;
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
 auto& wall(manager.addEntity());
+auto& box(manager.addEntity());
 
+enum groupLabels : std::size_t
+{
+    groupMap,
+    groupBall,
+    groupColliders,
+    groupHole,
+    groupBorder
+    
+};
 
 auto& tile0(manager.addEntity());
 auto& tile1(manager.addEntity());
 auto& tile2(manager.addEntity());
+auto& tilebox1(manager.addEntity());
 
 Game::Game()
 {
@@ -78,14 +89,13 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<BallMechanic>();
     newPlayer.addComponent<ColliderComponent>("ball");
+    newPlayer.addGroup(groupBall);
 
-    wall.addComponent<TransformComponent>(400.0f, 200.0f, 200, 200, 1);
-    wall.addComponent<SpriteComponent>("assets/wall.png");
-    wall.addComponent<ColliderComponent>("wall");
 
     wall.addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
     wall.addComponent<SpriteComponent>("assets/borderup.png");
     wall.addComponent<ColliderComponent>("wall");
+    wall.addGroup(groupBorder);
 
     wall.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
     wall.addComponent<SpriteComponent>("assets/borderleft.png");
@@ -118,13 +128,18 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     hole.addComponent<TransformComponent>(800.0f, 200.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
+    hole.addGroup(groupHole);
   
 
-    tile0.addComponent<TileComponent>(200, 200, 32, 32, 0);
     tile1.addComponent<TileComponent>(250, 250, 32, 32, 1);
-    tile1.addComponent<ColliderComponent>("wall");
+    tile1.addComponent<ColliderComponent>("dirt");
+    tile1.addGroup(groupMap);
     tile2.addComponent<TileComponent>(150, 150, 32, 32, 2);
     tile2.addComponent<ColliderComponent>("water");
+    tile2.addGroup(groupMap);
+    tilebox1.addComponent<TileComponent>(400, 200, 200, 200, 0);
+    tilebox1.addComponent<ColliderComponent>("wall");
+    tilebox1.addGroup(groupMap);
 
 }
 bool mouseDown = false;
@@ -165,6 +180,11 @@ bool Game::getMouseDown() {
     return mouseDown;
 }
 
+auto& tiles(manager.getGroup(groupMap));
+auto& balls(manager.getGroup(groupBall));
+auto& holes(manager.getGroup(groupHole));
+auto& borders(manager.getGroup(groupBorder));
+
 void Game::update()
 {
     manager.refresh();
@@ -189,7 +209,7 @@ void Game::update()
                     ball->x + ball->w > entity->x &&
                     ball->y < entity->y + entity->h &&
                     ball->y + ball->h > entity->y &&
-                    cc->tag != "hole")
+                    cc->tag != "hole" && cc->tag != "dirt")
                 {
 
                     // Определяем, с какой стороны произошло столкновение
@@ -238,18 +258,44 @@ void Game::update()
                     newPlayer.getComponent<TransformComponent>().velocity.x = 0;
                     newPlayer.getComponent<TransformComponent>().velocity.y = 0;
                     newPlayer.getComponent<BallMechanic>().strokes = 0;
+                    
+                    for (auto& t : tiles) t->destroy();
+                    for (auto& h : holes) h->destroy();
+                    tiles.clear();
+                    holes.clear();
                 }
-
+                else if (cc->tag == "dirt")
+                {
+                    newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
+                    newPlayer.getComponent<TransformComponent>().velocity.y *= 0.98;
+                }
             }
     }
 }
+
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
  
     map->DrawMap();
-    manager.draw();
+    for (auto& o : borders)
+    {
+        o->draw();
+    }
+    for (auto& t : tiles)
+    {
+        t->draw();
+    }
+    for (auto& a : holes)
+    {
+        a->draw();
+    }
+    for (auto& p : balls)
+    {
+        p->draw();
+    }
+
     TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 24); // Путь к вашему шрифту, размер шрифта
     if (!font) {
         std::cerr << "Не удалось загрузить шрифт: " << TTF_GetError() << std::endl;
@@ -267,6 +313,13 @@ void Game::clean()
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
     std::cout << "You've exited the game" << std::endl;
+}
+
+void Game::AddTile(int id, int x, int y)
+{
+    auto& tile(manager.addEntity());
+    tile.addComponent<TileComponent>(x, y, 32, 32, id);
+    tile.addGroup(groupMap);
 }
 
 void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y)
