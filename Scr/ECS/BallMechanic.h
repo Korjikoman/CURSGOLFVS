@@ -4,6 +4,7 @@
 #include "Components.h"
 #include <SDL_ttf.h>
 #include <sstream>
+#include "SDL_mixer.h"
 
 class BallMechanic : public Component
 {
@@ -14,7 +15,8 @@ public:
 	Vector2D launchedVelocity;
 	Vector2D initialMousePos;
 	Vector2D currentMousePos;
-	
+	Mix_Chunk* swingSound = nullptr;
+
 	bool canMove = true;
 	bool playedSwingFx = true;
 	int index;
@@ -29,7 +31,7 @@ public:
 	float friction = 0.001;
 	bool isMoving = false;  // Флаг для проверки, что мяч двигается
 
-	float stopThreshold = 0.05f;
+	float stopThreshold = 0.005f;
 
 	std::string to_string(int value) {
 		std::stringstream ss;
@@ -47,6 +49,10 @@ public:
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
+		swingSound = Mix_LoadWAV("assets/sfx/swing.mp3");
+		if (!swingSound) {
+			std::cerr << "Failed to load swing sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
+		}
 	}
 
 	Vector2D& getVelocity()
@@ -144,24 +150,16 @@ public:
 					// Задаем вектор скорости
 					setVelocity((mouseX - getInitialMousePos().x) / -60, (mouseY - getInitialMousePos().y) / -60);
 
-					if (transform->velocity.x > 5)
-					{
-						transform->velocity.x = 5;
-					}
+					float velocityX1 = transform->velocity.x;
+					float velocityY1 = transform->velocity.y;
+					float velocityMagnitude = sqrt(velocityX1 * velocityX1 + velocityY1 * velocityY1);
 
-					if (transform->velocity.y > 5)
-					{
-						transform->velocity.y = 5;
-					}
-
-					if (transform->velocity.x < -5)
-					{
-						transform->velocity.x = -5;
-					}
-
-					if (transform->velocity.y < -5)
-					{
-						transform->velocity.y = -5;
+					// Устанавливаем максимальную скорость
+					const float maxVelocity = 5.0f; // Например, 10.0
+					if (velocityMagnitude > maxVelocity) {
+						float normalizationFactor = maxVelocity / velocityMagnitude;
+						transform->velocity.x *= normalizationFactor;
+						transform->velocity.y *= normalizationFactor;
 					}
 
 					// Находим модуль скорости через теорему Пифагора (v0)
@@ -173,6 +171,9 @@ public:
 
 					// Увеличиваем количество ударов
 					strokes++;
+					if (swingSound) {
+						Mix_PlayChannel(-1, swingSound, 0);
+					}
 				}
 				break;
 			}

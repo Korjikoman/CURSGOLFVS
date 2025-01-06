@@ -45,7 +45,7 @@ public:
 
 	void update() override
 	{
-		if (abs(velocity.x) > 0.002f && abs(velocity.y) > 0.002f)
+		if (abs(velocity.x) > 0.005f && abs(velocity.y) > 0.005f)
 		{
 			position.x += velocity.x;
 			position.y += velocity.y;
@@ -54,7 +54,12 @@ public:
 			velocity.x += acceleration.x;
 			velocity.y += acceleration.y;
 		}
-		
+		else
+		{
+			// Устанавливаем скорость и ускорение в 0, если скорость слишком мала
+			velocity.Zero();
+			acceleration.Zero();
+		}
 			
 	}
 

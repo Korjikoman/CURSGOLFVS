@@ -6,6 +6,7 @@
 #include "ECS/Components.h"
 #include "Collision.h"
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -15,10 +16,10 @@ Map* map;
 Manager manager;
 SDL_Event Game::event;
 bool Game::win = false; // Инициализация переменной win
-
+int currentLevel = 1;
 std::vector<ColliderComponent*> Game::colliders;
-
-
+Mix_Chunk* holeSound = nullptr;
+Mix_Chunk* budaSound = nullptr;
 
 
 auto& newPlayer(manager.addEntity());
@@ -40,6 +41,8 @@ auto& tile0(manager.addEntity());
 auto& tile1(manager.addEntity());
 auto& tile2(manager.addEntity());
 auto& tilebox1(manager.addEntity());
+auto& tilebox2(manager.addEntity());
+auto& tilebox3(manager.addEntity());
 
 Game::Game()
 {
@@ -72,6 +75,20 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
                 << "Renderer created!" << std::endl;
         }
         isRunning = true;
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+            std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        }
+        holeSound = Mix_LoadWAV("assets/sfx/hole.mp3");
+        if (!holeSound) {
+            std::cerr << "Failed to load hole sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        }
+        budaSound = Mix_LoadWAV("assets/sfx/budek.mp3");
+        if (!budaSound) {
+            std::cerr << "Failed to load buda sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        }
+        if (budaSound) {
+            Mix_PlayChannel(-1, budaSound, 10);
+        }
     }
     else
     {
@@ -85,7 +102,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    newPlayer.addComponent<TransformComponent>(100.0f, 200.0f, 32, 32, 1);
+    newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<BallMechanic>();
     newPlayer.addComponent<ColliderComponent>("ball");
@@ -125,21 +142,31 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall.addComponent<SpriteComponent>("assets/border.png");
     wall.addComponent<ColliderComponent>("wall");
 
-    hole.addComponent<TransformComponent>(800.0f, 200.0f, 40, 40, 1);
+    hole.addComponent<TransformComponent>(800.0f, 500.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
     hole.addGroup(groupHole);
   
 
-    tile1.addComponent<TileComponent>(250, 250, 32, 32, 1);
+    tile1.addComponent<TileComponent>(200, 332, 70, 400, 1);
     tile1.addComponent<ColliderComponent>("dirt");
     tile1.addGroup(groupMap);
-    tile2.addComponent<TileComponent>(150, 150, 32, 32, 2);
+
+    tile2.addComponent<TileComponent>(300, 150, 32, 32, 2);
     tile2.addComponent<ColliderComponent>("water");
     tile2.addGroup(groupMap);
-    tilebox1.addComponent<TileComponent>(400, 200, 200, 200, 0);
+
+    tilebox1.addComponent<TileComponent>(200, 32, 300, 300, 0);
     tilebox1.addComponent<ColliderComponent>("wall");
     tilebox1.addGroup(groupMap);
+
+    tilebox2.addComponent<TileComponent>(500, 400, 200, 200, 0);
+    tilebox2.addComponent<ColliderComponent>("wall");
+    tilebox2.addGroup(groupMap);
+
+    tilebox2.addComponent<TileComponent>(32, 500, 98, 200, 0);
+    tilebox2.addComponent<ColliderComponent>("wall");
+    tilebox2.addGroup(groupMap);
 
 }
 bool mouseDown = false;
@@ -230,11 +257,13 @@ void Game::update()
                             std::cout << "COLLISION FROM TOP\n";
                             newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
                             newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                            newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение
                         }
                         else {
                             std::cout << "COLLISION FROM BOTTOM\n";
                             newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
                             newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                            newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение
                         }
                     }
                     else {
@@ -242,11 +271,13 @@ void Game::update()
                             std::cout << "COLLISION FROM LEFT\n";
                             newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
                             newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                            newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение
                         }
                         else {
                             std::cout << "COLLISION FROM RIGHT\n";
                             newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
                             newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                            newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение
                         }
                     }
 
@@ -258,11 +289,15 @@ void Game::update()
                     newPlayer.getComponent<TransformComponent>().velocity.x = 0;
                     newPlayer.getComponent<TransformComponent>().velocity.y = 0;
                     newPlayer.getComponent<BallMechanic>().strokes = 0;
-                    
+                    if (holeSound) {
+                        Mix_PlayChannel(-1, holeSound, 0);
+                    }
                     for (auto& t : tiles) t->destroy();
                     for (auto& h : holes) h->destroy();
                     tiles.clear();
                     holes.clear();
+                    currentLevel++;
+                    loadLevel(currentLevel);
                 }
                 else if (cc->tag == "dirt")
                 {
@@ -296,12 +331,18 @@ void Game::render()
         p->draw();
     }
 
-    TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 24); // Путь к вашему шрифту, размер шрифта
+    TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 30); // Путь к вашему шрифту, размер шрифта
     if (!font) {
         std::cerr << "Не удалось загрузить шрифт: " << TTF_GetError() << std::endl;
     }
     std::string strokesText = "Strokes: " + std::to_string(newPlayer.getComponent<BallMechanic>().strokes);
     renderText(renderer, font, strokesText, 33, 0); // Текст в левом верхнем углу
+
+    std::string levelText = "Level: " + std::to_string(currentLevel);
+    renderText(renderer, font, levelText, 900 - 60, 0); 
+
+    std::string nameText = "CursGolf";
+    renderText(renderer, font, nameText, 900 - 480, 0);
 
     SDL_RenderPresent(renderer);
 
@@ -311,6 +352,7 @@ void Game::clean()
 {
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+    Mix_CloseAudio();
     SDL_Quit();
     std::cout << "You've exited the game" << std::endl;
 }
@@ -354,3 +396,30 @@ void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string&
     SDL_DestroyTexture(texture);
 }
 
+void Game::loadLevel(int level)
+{
+
+    // Загрузка объектов в зависимости от уровня
+
+    if (level == 2)
+    {
+        // Второй уровень
+        auto& tile3(manager.addEntity());
+        tile3.addComponent<TileComponent>(400, 400, 70, 70, 1);
+        tile3.addComponent<ColliderComponent>("dirt");
+        tile3.addGroup(groupMap);
+
+        tile2.addComponent<TileComponent>(200, 200, 32, 32, 2);
+        tile2.addComponent<ColliderComponent>("water");
+        tile2.addGroup(groupMap);
+
+        tilebox1.addComponent<TileComponent>(100, 32, 300, 300, 0);
+        tilebox1.addComponent<ColliderComponent>("wall");
+        tilebox1.addGroup(groupMap);
+
+        hole.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);
+        hole.addComponent<SpriteComponent>("assets/hole.png");
+        hole.addComponent<ColliderComponent>("hole");
+        hole.addGroup(groupHole);
+    }
+}

@@ -34,4 +34,8 @@ private:
     int counter = 0;
     bool isRunning;
     SDL_Window *window;
+    std::vector<std::string> musicTracks;
+    int currentTrackIndex = 0;
+    bool isMusicPlaying = false;
+
 };

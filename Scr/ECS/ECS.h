@@ -68,6 +68,7 @@ public:
 
 	bool isActive() { return active; }
 	void destroy() { active = false; }
+	void revive() { active = true; }
 
 	bool hasGroup(Group mGroup) 
 	{
