@@ -305,7 +305,6 @@ void Game::update()
                     for (auto& t : tiles)
                     {
                         t->destroy();
-                        manager.removeEntity(t);
                     }
                     for (auto& h : holes) h->destroy();
                     tiles.clear();
