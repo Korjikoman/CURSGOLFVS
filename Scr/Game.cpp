@@ -119,13 +119,17 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall.addComponent<ColliderComponent>("wall");
     wall.addGroup(groupBorder);
 
-    wall.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/borderleft.png");
-    wall.addComponent<ColliderComponent>("wall");
+    auto& wall1(manager.addEntity());
+    wall1.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
+    wall1.addComponent<SpriteComponent>("assets/borderleft.png");
+    wall1.addComponent<ColliderComponent>("wall");
+    wall1.addGroup(groupBorder);
 
-    wall.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/borderright.png");
-    wall.addComponent<ColliderComponent>("wall");
+    auto& wall2(manager.addEntity());
+    wall2.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
+    wall2.addComponent<SpriteComponent>("assets/borderright.png");
+    wall2.addComponent<ColliderComponent>("wall");
+    wall2.addGroup(groupBorder);
 
     wall.addComponent<TransformComponent>(32.0f, 598.0f, 32, 896, 1);
     wall.addComponent<SpriteComponent>("assets/borderdown.png");
@@ -172,6 +176,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     tilebox2.addComponent<TileComponent>(32, 500, 98, 200, 0);
     tilebox2.addComponent<ColliderComponent>("wall");
     tilebox2.addGroup(groupMap);
+
 
 
 
@@ -465,6 +470,8 @@ void Game::loadLevel(int level)
         hole2.addComponent<SpriteComponent>("assets/hole.png");
         hole2.addComponent<ColliderComponent>("hole");
         hole2.addGroup(groupHole);
+
+        
     }
     if (level == 3) {
        ;
