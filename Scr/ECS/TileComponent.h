@@ -38,6 +38,15 @@ public:
 		case 2:
 			path = (char*)"assets/water.png";
 			break;
+		case 3:
+			path = (char*)"assets/sand.png";
+			break;
+		case 4:
+			path = (char*)"assets/ice.png";
+			break;
+		case 10:
+			path = (char*)"assets/boostright.png";
+			break;
 		}
 	}
 

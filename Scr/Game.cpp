@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "Map.h"
 
+#include <sstream>
 #include "ECS/ECS.h"
 #include "ECS/Components.h"
 #include "Collision.h"
@@ -20,7 +21,8 @@ int currentLevel = 1;
 std::vector<ColliderComponent*> Game::colliders;
 Mix_Chunk* holeSound = nullptr;
 Mix_Chunk* budaSound = nullptr;
-
+Uint32 startTime; // Время начала таймера
+float elapsedTime; // Прошедшее время в секундах
 
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
@@ -33,8 +35,8 @@ enum groupLabels : std::size_t
     groupBall,
     groupColliders,
     groupHole,
-    groupBorder
-    
+    groupBorder,
+    groupBooster
 };
 
 auto& tile0(manager.addEntity());
@@ -99,6 +101,9 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
         isRunning = false;
     }
     map = new Map();
+
+    startTime = SDL_GetTicks(); // Записываем время начала в миллисекундах
+    elapsedTime = 0; // Инициализируем прошедшее время
 
     // ecs implementation
 
@@ -168,6 +173,9 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     tilebox2.addComponent<ColliderComponent>("wall");
     tilebox2.addGroup(groupMap);
 
+
+
+
 }
 bool mouseDown = false;
 bool mousePressed = false;
@@ -211,6 +219,7 @@ auto& tiles(manager.getGroup(groupMap));
 auto& balls(manager.getGroup(groupBall));
 auto& holes(manager.getGroup(groupHole));
 auto& borders(manager.getGroup(groupBorder));
+auto& boosters(manager.getGroup(groupBooster));
 
 void Game::update()
 {
@@ -236,7 +245,8 @@ void Game::update()
                     ball->x + ball->w > entity->x &&
                     ball->y < entity->y + entity->h &&
                     ball->y + ball->h > entity->y &&
-                    cc->tag != "hole" && cc->tag != "dirt")
+                    cc->tag != "hole" && cc->tag != "dirt" && cc->tag != "sand"
+                    && cc->tag != "boosterright" && cc->tag != "ice")
                 {
 
                     // Определяем, с какой стороны произошло столкновение
@@ -292,10 +302,15 @@ void Game::update()
                     if (holeSound) {
                         Mix_PlayChannel(-1, holeSound, 0);
                     }
-                    for (auto& t : tiles) t->destroy();
+                    for (auto& t : tiles)
+                    {
+                        t->destroy();
+                        manager.removeEntity(t);
+                    }
                     for (auto& h : holes) h->destroy();
                     tiles.clear();
                     holes.clear();
+                   
                     currentLevel++;
                     loadLevel(currentLevel);
                 }
@@ -304,8 +319,22 @@ void Game::update()
                     newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
                     newPlayer.getComponent<TransformComponent>().velocity.y *= 0.98;
                 }
+
+                else if (cc->tag == "sand")
+                {
+                    newPlayer.getComponent<TransformComponent>().velocity.x *= 0.95;
+                    newPlayer.getComponent<TransformComponent>().velocity.y *= 0.95;
+                }
+
+                else if (cc->tag == "ice")
+                {
+                    
+                }
+               
             }
     }
+
+    elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 
 
@@ -326,6 +355,10 @@ void Game::render()
     {
         a->draw();
     }
+    for (auto& l : boosters)
+    {
+        l->draw();
+    }
     for (auto& p : balls)
     {
         p->draw();
@@ -343,6 +376,12 @@ void Game::render()
 
     std::string nameText = "CursGolf";
     renderText(renderer, font, nameText, 900 - 480, 0);
+
+    std::ostringstream timerStream;
+    timerStream.precision(1);
+    timerStream << std::fixed << elapsedTime;
+    std::string timerText = "Time: " + timerStream.str() + "s";
+    renderText(renderer, font, timerText, 620, 0);
 
     SDL_RenderPresent(renderer);
 
@@ -400,26 +439,35 @@ void Game::loadLevel(int level)
 {
 
     // Загрузка объектов в зависимости от уровня
-
+    startTime = SDL_GetTicks(); // Сбрасываем таймер
+    
     if (level == 2)
     {
         // Второй уровень
+
         auto& tile3(manager.addEntity());
         tile3.addComponent<TileComponent>(400, 400, 70, 70, 1);
         tile3.addComponent<ColliderComponent>("dirt");
         tile3.addGroup(groupMap);
 
-        tile2.addComponent<TileComponent>(200, 200, 32, 32, 2);
-        tile2.addComponent<ColliderComponent>("water");
-        tile2.addGroup(groupMap);
+        auto& sandtile1(manager.addEntity());
+        sandtile1.addComponent<TileComponent>(200, 200, 100, 100, 3);
+        sandtile1.addComponent<ColliderComponent>("sand");
+        sandtile1.addGroup(groupMap);
+        
+        auto& icetile1(manager.addEntity());
+        icetile1.addComponent<TileComponent>(100, 50, 50, 50, 4);
+        icetile1.addComponent<ColliderComponent>("ice");
+        icetile1.addGroup(groupMap);
 
-        tilebox1.addComponent<TileComponent>(100, 32, 300, 300, 0);
-        tilebox1.addComponent<ColliderComponent>("wall");
-        tilebox1.addGroup(groupMap);
 
-        hole.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);
-        hole.addComponent<SpriteComponent>("assets/hole.png");
-        hole.addComponent<ColliderComponent>("hole");
-        hole.addGroup(groupHole);
+        auto& hole2(manager.addEntity());
+        hole2.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);
+        hole2.addComponent<SpriteComponent>("assets/hole.png");
+        hole2.addComponent<ColliderComponent>("hole");
+        hole2.addGroup(groupHole);
+    }
+    if (level == 3) {
+       ;
     }
 }

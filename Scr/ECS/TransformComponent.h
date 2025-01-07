@@ -9,7 +9,7 @@ public:
 	Vector2D position;
 	Vector2D velocity;
 	Vector2D acceleration;
-
+	
 	int speed;
 
 	int height = 32;

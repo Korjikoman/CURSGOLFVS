@@ -170,7 +170,27 @@ public:
 		entities.emplace_back(std::move(uPtr));
 		return *e;
 	}
+	void removeEntity(Entity* entityToRemove)
+	{
+		// Remove the entity from groupedEntities
+		for (auto& group : groupedEntities)
+		{
+			group.erase(
+				std::remove(group.begin(), group.end(), entityToRemove),
+				group.end()
+			);
+		}
 
+		// Remove the entity from the main entities list
+		entities.erase(
+			std::remove_if(entities.begin(), entities.end(),
+				[entityToRemove](const std::unique_ptr<Entity>& entity)
+				{
+					return entity.get() == entityToRemove;
+				}),
+			entities.end()
+		);
+	}
 	
 };
 
