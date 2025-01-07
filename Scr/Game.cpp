@@ -464,13 +464,12 @@ void Game::loadLevel(int level)
         icetile1.addComponent<ColliderComponent>("ice");
         icetile1.addGroup(groupMap);
 
-
         auto& hole2(manager.addEntity());
         hole2.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);
         hole2.addComponent<SpriteComponent>("assets/hole.png");
         hole2.addComponent<ColliderComponent>("hole");
         hole2.addGroup(groupHole);
-
+       
         
     }
     if (level == 3) {
