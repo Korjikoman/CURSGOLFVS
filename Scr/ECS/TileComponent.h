@@ -44,6 +44,9 @@ public:
 		case 4:
 			path = (char*)"assets/ice.png";
 			break;
+		case 5:
+			path = (char*)"assets/grass.png";
+			break;
 		case 10:
 			path = (char*)"assets/boostright.png";
 			break;

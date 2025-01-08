@@ -84,7 +84,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
         if (!holeSound) {
             std::cerr << "Failed to load hole sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
         }
-        budaSound = Mix_LoadWAV("assets/sfx/budek.mp3");
+        budaSound = Mix_LoadWAV("assets/sfx/bude.mp3");
         if (!budaSound) {
             std::cerr << "Failed to load buda sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
         }
@@ -106,6 +106,8 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     elapsedTime = 0; // Инициализируем прошедшее время
 
     // ecs implementation
+
+    Map::LoadMap("assets/pyxel.map", 16, 16);
 
     newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -352,7 +354,7 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
  
-    map->LoadMap();
+
     for (auto& o : borders)
     {
         o->draw();
