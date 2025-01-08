@@ -207,6 +207,12 @@ void Game::handleEvents()
             mouseDown = false;
         }
         break;
+    case SDL_KEYDOWN: 
+        if (event.key.keysym.sym == SDLK_ESCAPE) 
+        { 
+            isRunning = false; 
+        } 
+        break;
     default:
         break;
     }
@@ -381,6 +387,9 @@ void Game::render()
     std::string nameText = "CursGolf";
     renderText(renderer, font, nameText, 900 - 480, 0);
 
+    std::string escText = "esc for exit";
+    renderText(renderer, font, escText, 32, 596);
+
     std::ostringstream timerStream;
     timerStream.precision(1);
     timerStream << std::fixed << elapsedTime;
@@ -439,6 +448,8 @@ void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string&
     SDL_DestroyTexture(texture);
 }
 
+
+
 void Game::loadLevel(int level)
 {
 
@@ -463,6 +474,11 @@ void Game::loadLevel(int level)
         icetile1.addComponent<TileComponent>(100, 50, 50, 50, 4);
         icetile1.addComponent<ColliderComponent>("ice");
         icetile1.addGroup(groupMap);
+
+        auto& icetile2(manager.addEntity());
+        icetile2.addComponent<TileComponent>(100, 50, 50, 50, 4);
+        icetile2.addComponent<ColliderComponent>("ice");
+        icetile2.addGroup(groupMap);
 
         auto& hole2(manager.addEntity());
         hole2.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);

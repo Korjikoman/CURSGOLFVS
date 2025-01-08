@@ -45,6 +45,9 @@
     <ClCompile Include="Scr\ECS\ECS.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scr\menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Game.h">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scr\ECS\TileComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
