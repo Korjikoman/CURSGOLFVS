@@ -352,7 +352,7 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
  
-    map->DrawMap();
+    map->LoadMap();
     for (auto& o : borders)
     {
         o->draw();
