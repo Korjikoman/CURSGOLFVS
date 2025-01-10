@@ -237,13 +237,18 @@ void Game::update()
     manager.refresh();
     manager.update();
 
+    bool collisionProcessed = false;
+
     for (auto c : colliders)
     {
-        
+        if (collisionProcessed) break;
+
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         std::string tag = c->getComponent<ColliderComponent>().tag;
         if (Collision::AABB(cCol, ballCol))
         {
+            collisionProcessed = true;
+
             // Получаем коллайдеры
             SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
             SDL_Rect* entity = &c->getComponent<ColliderComponent>().collider;
@@ -271,13 +276,13 @@ void Game::update()
                 if (intersectX > intersectY) {
                     if (deltaY > 0) {
                         std::cout << "COLLISION FROM TOP\n";
-                        newPlayer.getComponent<TransformComponent>().position.y += intersectY + 1; // Смещение вверх
+                        newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
                     else {
                         std::cout << "COLLISION FROM BOTTOM\n";
-                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY + 1; // Смещение вниз
+                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
@@ -285,13 +290,13 @@ void Game::update()
                 else {
                     if (deltaX > 0) {
                         std::cout << "COLLISION FROM LEFT\n";
-                        newPlayer.getComponent<TransformComponent>().position.x += intersectX + 1; // Смещение вправо
+                        newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
                     else {
                         std::cout << "COLLISION FROM RIGHT\n";
-                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX + 1; // Смещение влево
+                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
