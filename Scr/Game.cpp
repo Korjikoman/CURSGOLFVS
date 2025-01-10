@@ -249,28 +249,31 @@ void Game::update()
         {
             collisionProcessed = true;
 
+            
+
             // Получаем коллайдеры
             SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
             SDL_Rect* entity = &c->getComponent<ColliderComponent>().collider;
+
+            // Определяем, с какой стороны произошло столкновение
+            int ballCenterX = ball->x + ball->w / 2;
+            int ballCenterY = ball->y + ball->h / 2;
+            int entityCenterX = entity->x + entity->w / 2;
+            int entityCenterY = entity->y + entity->h / 2;
+
+            int deltaX = ballCenterX - entityCenterX;
+            int deltaY = ballCenterY - entityCenterY;
+
+            int intersectX = (ball->w / 2 + entity->w / 2) - abs(deltaX);
+            int intersectY = (ball->h / 2 + entity->h / 2) - abs(deltaY);
+
             if (ball->x < entity->x + entity->w &&
                 ball->x + ball->w > entity->x &&
                 ball->y < entity->y + entity->h &&
                 ball->y + ball->h > entity->y &&
                 tag != "hole" && tag != "dirt" && tag != "sand"
-                && tag != "boosterright" && tag != "ice")
+                && tag != "boosterright" && tag != "ice" && tag != "DOWNER" && tag != "UPPER")
             {
-
-                // Определяем, с какой стороны произошло столкновение
-                int ballCenterX = ball->x + ball->w / 2;
-                int ballCenterY = ball->y + ball->h / 2;
-                int entityCenterX = entity->x + entity->w / 2;
-                int entityCenterY = entity->y + entity->h / 2;
-
-                int deltaX = ballCenterX - entityCenterX;
-                int deltaY = ballCenterY - entityCenterY;
-
-                int intersectX = (ball->w / 2 + entity->w / 2) - abs(deltaX);
-                int intersectY = (ball->h / 2 + entity->h / 2) - abs(deltaY);
 
                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
                 if (intersectX > intersectY) {
@@ -340,7 +343,53 @@ void Game::update()
             {
 
             }
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && tag == "UPPER")
+            {
 
+                // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                
+                if (deltaY > 0) {
+                    std::cout << "COLLISION FROM TOP\n";
+                    newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                    newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                    newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                }
+                else {
+                    std::cout << "COLLISION FROM BOTTOM\n";
+                    newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                    newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                    newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                }
+               
+               
+            }
+
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && tag == "DOWNER")
+            {
+
+              
+                    if (deltaY > 0) {
+                        std::cout << "COLLISION FROM TOP\n";
+                        newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                    }
+                    else {
+                        std::cout << "COLLISION FROM BOTTOM\n";
+                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                    }
+                
+               
+            }
+            
         }
     }
 

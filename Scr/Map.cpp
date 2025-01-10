@@ -64,6 +64,19 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 				tcol.addGroup(Game::groupColliders);
 				
 			}
+
+			if (tile == '2') {
+				auto& tcol1(manager.addEntity());
+				tcol1.addComponent<ColliderComponent>("DOWNER", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol1.addGroup(Game::groupColliders);
+
+			}
+			if (tile == '3') {
+				auto& tcol2(manager.addEntity());
+				tcol2.addComponent<ColliderComponent>("UPPER", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol2.addGroup(Game::groupColliders);
+
+			}
 			mapFile.ignore();
 		}
 		std::cout << "\n";

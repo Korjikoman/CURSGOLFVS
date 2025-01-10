@@ -13,7 +13,10 @@ public:
 	std::string tag;
 
 	SDL_Texture* tex;
+
+
 	SDL_Rect srcR, destR;
+
 
 
 	TransformComponent* transform;
@@ -44,8 +47,6 @@ public:
 		srcR = { 0, 0, 32, 32 };
 		destR = { 0, 0, 32, 32 };
 
-
-
 	}
 
 	void draw() override
@@ -55,13 +56,14 @@ public:
 
 	void update() override 
 	{
-		if (tag != "terrain")
+		if (tag != "terrain" && tag != "UPPER" && tag != "DOWNER")
 		{
 			collider.x = static_cast<int>(transform->position.x);
 			collider.y = static_cast<int>(transform->position.y);
 			collider.w = transform->width * transform->scale;
 			collider.h = transform->height * transform->scale;
 		}
+
 		
 		
 		destR.x = collider.x;
