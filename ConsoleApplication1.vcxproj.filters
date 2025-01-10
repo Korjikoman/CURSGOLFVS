@@ -95,6 +95,12 @@
     <ClInclude Include="Scr\menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scr\ECS\BallAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scr\ECS\KeyboardController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -109,9 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\ball.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\player.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\grass.png">
