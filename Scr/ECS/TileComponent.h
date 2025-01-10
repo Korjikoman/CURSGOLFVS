@@ -1,66 +1,42 @@
 #pragma once
 
 #include "ECS.h"
-#include "TransformComponent.h"
-#include "SpriteComponent.h"
 #include "SDL.h"
+
 
 class TileComponent : public Component
 {
 public:
-	TransformComponent *transform;
-	SpriteComponent* sprite;
+	SDL_Texture* texture;
+	SDL_Rect srcRect, destRect;
+
 	
-	SDL_Rect tileRect;
-	int tileID;
-
-
-	char* path;
-
 
 	TileComponent() = default;
-	TileComponent(int x, int y, int w, int h, int id)
-	{
-		tileRect.x = x;
-		tileRect.y = y;
-		tileRect.h = h;
-		tileRect.w = w;
-		tileID = id;
 
-		switch (tileID)
-		{
-		case 0:
-			path = (char*)"assets/wall.png";
-			break;
-		case 1:
-			path = (char*)"assets/dirt.png";
-			break;
-		case 2:
-			path = (char*)"assets/water.png";
-			break;
-		case 3:
-			path = (char*)"assets/sand.png";
-			break;
-		case 4:
-			path = (char*)"assets/ice.png";
-			break;
-		case 5:
-			path = (char*)"assets/grass.png";
-			break;
-		case 10:
-			path = (char*)"assets/boostright.png";
-			break;
-		}
+	~TileComponent()
+	{
+		SDL_DestroyTexture(texture);
 	}
 
-	void init() override
+	TileComponent(int srcX, int srcY, int xpos, int ypos, const char* path)
 	{
-		entity->addComponent<TransformComponent>((float)tileRect.x, 
-			(float)tileRect.y, tileRect.w, tileRect.h, 1);
-		transform = &entity->getComponent<TransformComponent>();
+		texture = TextureManager::LoadTexture(path);
 
-		entity->addComponent<SpriteComponent>(path);
-		sprite = &entity->getComponent<SpriteComponent>();
+		srcRect.x = srcX;
+		srcRect.y = srcY;
+		srcRect.w = srcRect.h = 32;
+
+		destRect.x = xpos;
+		destRect.y = ypos;
+		destRect.w = destRect.h = 32;
+
+
+	}
+
+	void draw() override
+	{
+		TextureManager::Draw(texture, srcRect, destRect);
 	}
 
 };

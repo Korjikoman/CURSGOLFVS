@@ -24,6 +24,10 @@ Mix_Chunk* budaSound = nullptr;
 Uint32 startTime; // Время начала таймера
 float elapsedTime; // Прошедшее время в секундах
 
+
+const char* mapfile = "assets/newtileset.png";
+
+
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
 auto& wall(manager.addEntity());
@@ -107,7 +111,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    Map::LoadMap("assets/pyxel.map", 16, 16);
+    Map::LoadMap("assets/map.map", 30, 19);
 
     newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -115,28 +119,32 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     newPlayer.addComponent<ColliderComponent>("ball");
     newPlayer.addGroup(groupBall);
 
-
+    // верхняя стенка
     wall.addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
     wall.addComponent<SpriteComponent>("assets/borderup.png");
     wall.addComponent<ColliderComponent>("wall");
     wall.addGroup(groupBorder);
 
+    // стенка слева 
     auto& wall1(manager.addEntity());
     wall1.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
     wall1.addComponent<SpriteComponent>("assets/borderleft.png");
     wall1.addComponent<ColliderComponent>("wall");
     wall1.addGroup(groupBorder);
 
+    // стенка справа 
     auto& wall2(manager.addEntity());
     wall2.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
     wall2.addComponent<SpriteComponent>("assets/borderright.png");
     wall2.addComponent<ColliderComponent>("wall");
     wall2.addGroup(groupBorder);
 
+    // стенка снизу
     wall.addComponent<TransformComponent>(32.0f, 598.0f, 32, 896, 1);
     wall.addComponent<SpriteComponent>("assets/borderdown.png");
     wall.addComponent<ColliderComponent>("wall");
 
+    // 4 квадратика по краям
     wall.addComponent<TransformComponent>(0.0f, 0.0f, 32, 32, 1);
     wall.addComponent<SpriteComponent>("assets/border.png");
     wall.addComponent<ColliderComponent>("wall");
@@ -152,34 +160,13 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall.addComponent<TransformComponent>(0.0f, 598.0f, 32, 32, 1);
     wall.addComponent<SpriteComponent>("assets/border.png");
     wall.addComponent<ColliderComponent>("wall");
+    // 
 
     hole.addComponent<TransformComponent>(800.0f, 500.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
     hole.addGroup(groupHole);
   
-
-    tile1.addComponent<TileComponent>(200, 332, 70, 400, 1);
-    tile1.addComponent<ColliderComponent>("dirt");
-    tile1.addGroup(groupMap);
-
-    tile2.addComponent<TileComponent>(300, 150, 32, 32, 2);
-    tile2.addComponent<ColliderComponent>("water");
-    tile2.addGroup(groupMap);
-
-    tilebox1.addComponent<TileComponent>(200, 32, 300, 300, 0);
-    tilebox1.addComponent<ColliderComponent>("wall");
-    tilebox1.addGroup(groupMap);
-
-    tilebox2.addComponent<TileComponent>(500, 400, 200, 200, 0);
-    tilebox2.addComponent<ColliderComponent>("wall");
-    tilebox2.addGroup(groupMap);
-
-    tilebox2.addComponent<TileComponent>(32, 500, 98, 200, 0);
-    tilebox2.addComponent<ColliderComponent>("wall");
-    tilebox2.addGroup(groupMap);
-
-
 
 
 
@@ -228,24 +215,19 @@ bool Game::getMouseDown() {
     return mouseDown;
 }
 
+
+
 auto& tiles(manager.getGroup(groupMap));
 auto& balls(manager.getGroup(groupBall));
 auto& holes(manager.getGroup(groupHole));
 auto& borders(manager.getGroup(groupBorder));
 auto& boosters(manager.getGroup(groupBooster));
 
+
 void Game::update()
 {
     manager.refresh();
     manager.update();
-
-    //
-    /*recA.x + recA.w >= recB.x &&
-        recB.x + recB.w >= recA.x &&
-        recA.y + recA.h >= recB.y &&
-        recB.y + recB.h >= recA.y*/
-        //
-
 
     for (auto cc : colliders)
     {
@@ -315,11 +297,11 @@ void Game::update()
                     if (holeSound) {
                         Mix_PlayChannel(-1, holeSound, 0);
                     }
-                    for (auto& t : tiles)
+                    for (auto& tile : tiles)
                     {
-                        t->destroy();
+                        tile->destroy();
                     }
-                    for (auto& h : holes) h->destroy();
+                    for (auto& hole : holes) hole->destroy();
                     tiles.clear();
                     holes.clear();
                    
@@ -350,30 +332,33 @@ void Game::update()
 }
 
 
+
 void Game::render()
 {
     SDL_RenderClear(renderer);
  
 
-    for (auto& o : borders)
+    for (auto& tile : tiles)
     {
-        o->draw();
+        tile->draw();
     }
-    for (auto& t : tiles)
+
+    for (auto& border : borders)
     {
-        t->draw();
+        border->draw();
     }
-    for (auto& a : holes)
+    
+    for (auto& hole : holes)
     {
-        a->draw();
+        hole->draw();
     }
-    for (auto& l : boosters)
+    for (auto& booster : boosters)
     {
-        l->draw();
+        booster->draw();
     }
-    for (auto& p : balls)
+    for (auto& ball : balls)
     {
-        p->draw();
+        ball->draw();
     }
 
     TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 30); // Путь к вашему шрифту, размер шрифта
@@ -411,10 +396,10 @@ void Game::clean()
     std::cout << "You've exited the game" << std::endl;
 }
 
-void Game::AddTile(int id, int x, int y)
+void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
     auto& tile(manager.addEntity());
-    tile.addComponent<TileComponent>(x, y, 32, 32, id);
+    tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapfile);
     tile.addGroup(groupMap);
 }
 
@@ -455,42 +440,5 @@ void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string&
 void Game::loadLevel(int level)
 {
 
-    // Загрузка объектов в зависимости от уровня
-    startTime = SDL_GetTicks(); // Сбрасываем таймер
     
-    if (level == 2)
-    {
-        // Второй уровень
-
-        auto& tile3(manager.addEntity());
-        tile3.addComponent<TileComponent>(400, 400, 70, 70, 1);
-        tile3.addComponent<ColliderComponent>("dirt");
-        tile3.addGroup(groupMap);
-
-        auto& sandtile1(manager.addEntity());
-        sandtile1.addComponent<TileComponent>(200, 200, 100, 100, 3);
-        sandtile1.addComponent<ColliderComponent>("sand");
-        sandtile1.addGroup(groupMap);
-        
-        auto& icetile1(manager.addEntity());
-        icetile1.addComponent<TileComponent>(100, 50, 50, 50, 4);
-        icetile1.addComponent<ColliderComponent>("ice");
-        icetile1.addGroup(groupMap);
-
-        auto& icetile2(manager.addEntity());
-        icetile2.addComponent<TileComponent>(100, 50, 50, 50, 4);
-        icetile2.addComponent<ColliderComponent>("ice");
-        icetile2.addGroup(groupMap);
-
-        auto& hole2(manager.addEntity());
-        hole2.addComponent<TransformComponent>(600.0f, 300.0f, 40, 40, 1);
-        hole2.addComponent<SpriteComponent>("assets/hole.png");
-        hole2.addComponent<ColliderComponent>("hole");
-        hole2.addGroup(groupHole);
-       
-        
-    }
-    if (level == 3) {
-       ;
-    }
 }

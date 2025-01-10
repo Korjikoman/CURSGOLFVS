@@ -133,6 +133,7 @@ public:
 
 	void refresh()
 	{
+		// удаляем Entities из группы
 		for (auto i(0u); i < maxGroups; i++)
 		{
 			auto& v(groupedEntities[i]);

@@ -33,11 +33,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scr\Collision.h" />
+    <ClInclude Include="Scr\ECS\BallAction.h" />
     <ClInclude Include="Scr\ECS\BallMechanic.h" />
     <ClInclude Include="Scr\ECS\ColiderComponent.h" />
     <ClInclude Include="Scr\ECS\Components.h" />
     <ClInclude Include="Scr\ECS\ECS.h" />
     <ClInclude Include="Scr\ECS\Hole.h" />
+    <ClInclude Include="Scr\ECS\KeyboardController.h" />
     <ClInclude Include="Scr\ECS\SpriteComponent.h" />
     <ClInclude Include="Scr\ECS\TileComponent.h" />
     <ClInclude Include="Scr\ECS\TransformComponent.h" />
@@ -80,7 +82,6 @@
     <Image Include="assets\gfx\tile64_light.png" />
     <Image Include="assets\gfx\UI_bg.png" />
     <Image Include="assets\grass.png" />
-    <Image Include="assets\player.png" />
     <Image Include="assets\wall.png" />
     <Image Include="assets\water.png" />
   </ItemGroup>
