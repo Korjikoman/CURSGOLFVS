@@ -64,19 +64,43 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 				tcol.addGroup(Game::groupColliders);
 				
 			}
-
 			if (tile == '2') {
-				auto& tcol1(manager.addEntity());
-				tcol1.addComponent<ColliderComponent>("DOWNER", x * scaledSize, y * scaledSize, tileSize * mapScale);
-				tcol1.addGroup(Game::groupColliders);
-
-			}
-			if (tile == '3') {
 				auto& tcol2(manager.addEntity());
-				tcol2.addComponent<ColliderComponent>("UPPER", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol2.addComponent<ColliderComponent>("UPPDOWNER", x * scaledSize, y * scaledSize, tileSize * mapScale);
 				tcol2.addGroup(Game::groupColliders);
 
 			}
+			if (tile == '3') {
+				auto& tcol3(manager.addEntity());
+				tcol3.addComponent<ColliderComponent>("LEFTRIGHTER", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol3.addGroup(Game::groupColliders);
+
+			}
+			if (tile == '4') {
+				auto& tcol4(manager.addEntity());
+				tcol4.addComponent<ColliderComponent>("corUPLEFT", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol4.addGroup(Game::groupColliders);
+
+			}
+			if (tile == '5') {
+				auto& tcol5(manager.addEntity());
+				tcol5.addComponent<ColliderComponent>("corUPRIGHT", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol5.addGroup(Game::groupColliders);
+
+			}
+			if (tile == '6') {
+				auto& tcol6(manager.addEntity());
+				tcol6.addComponent<ColliderComponent>("corDOWNLEFT", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol6.addGroup(Game::groupColliders);
+
+			}
+			if (tile == '7') {
+				auto& tcol7(manager.addEntity());
+				tcol7.addComponent<ColliderComponent>("corDOWNRIGHT", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol7.addGroup(Game::groupColliders);
+
+			}
+			
 			mapFile.ignore();
 		}
 		std::cout << "\n";

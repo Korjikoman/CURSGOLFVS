@@ -166,8 +166,12 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     hole.addComponent<TransformComponent>(800.0f, 500.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
-    hole.addGroup(groupHole);
-  
+    hole.addGroup(groupColliders);
+
+    auto& flag(manager.addEntity());
+    hole.addComponent<TransformComponent>(783.0f, 380.0f, 200, 100, 1);
+    hole.addComponent<SpriteComponent>("assets/flag.png");
+    hole.addGroup(groupFlag);
 
 
 
@@ -223,7 +227,7 @@ auto& balls(manager.getGroup(Game::groupBall));
 auto& holes(manager.getGroup(Game::groupHole));
 auto& borders(manager.getGroup(Game::groupBorder));
 auto& boosters(manager.getGroup(Game::groupBooster));
-
+auto& flags(manager.getGroup(Game::groupFlag));
 auto& colliders(manager.getGroup(Game::groupColliders));
 
 
@@ -272,7 +276,10 @@ void Game::update()
                 ball->y < entity->y + entity->h &&
                 ball->y + ball->h > entity->y &&
                 tag != "hole" && tag != "dirt" && tag != "sand"
-                && tag != "boosterright" && tag != "ice" && tag != "DOWNER" && tag != "UPPER")
+                && tag != "boosterright" && tag != "ice" && tag != "UPPDOWNER" 
+                && tag != "LEFTRIGHTER" && tag != "corUPLEFT"
+                && tag != "corUPRIGHT" && tag != "corDOWNLEFT"
+                && tag != "corDOWNRIGHT")
             {
 
                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
@@ -343,53 +350,141 @@ void Game::update()
             {
 
             }
+
             else if (ball->x < entity->x + entity->w &&
                 ball->x + ball->w > entity->x &&
                 ball->y < entity->y + entity->h &&
-                ball->y + ball->h > entity->y && tag == "UPPER")
+                ball->y + ball->h > entity->y && (tag == "UPPDOWNER"))
             {
 
                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
                 
-                if (deltaY > 0) {
-                    std::cout << "COLLISION FROM TOP\n";
-                    newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                    newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
-                    newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
-                }
-                else {
-                    std::cout << "COLLISION FROM BOTTOM\n";
-                    newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
-                    newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
-                    newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
-                }
-               
-               
+                 if (deltaY > 0) {
+                     std::cout << "COLLISION FROM TOP\n";
+                     newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                 }
+                 else {
+                     std::cout << "COLLISION FROM BOTTOM\n";
+                     newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                 }
             }
 
             else if (ball->x < entity->x + entity->w &&
                 ball->x + ball->w > entity->x &&
                 ball->y < entity->y + entity->h &&
-                ball->y + ball->h > entity->y && tag == "DOWNER")
+                ball->y + ball->h > entity->y && (tag == "LEFTRIGHTER"))
             {
 
-              
-                    if (deltaY > 0) {
-                        std::cout << "COLLISION FROM TOP\n";
-                        newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
-                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
-                    }
-                    else {
+                // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+
+                 if (deltaX > 0) {
+                     std::cout << "COLLISION FROM LEFT\n";
+                     newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                 }
+                 else {
+                     std::cout << "COLLISION FROM RIGHT\n";
+                     newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                 }
+            } 
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && (tag == "corDOWNRIGHT"))
+            {
+
+                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                 if (intersectX > intersectY) {
+                     if (deltaY > 0) {
+                         std::cout << "COLLISION FROM TOP\n";
+                         newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                     }
+                 }
+                 else {
+                     if (deltaX > 0) {
+                         std::cout << "COLLISION FROM LEFT\n";
+                         newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                     }
+                 }
+            }
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && (tag == "corDOWNLEFT"))
+            {
+
+                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                 if (intersectX > intersectY) {
+                     if (deltaY > 0) {
+                         std::cout << "COLLISION FROM TOP\n";
+                         newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                     }
+                 }
+                 else {
+                     std::cout << "COLLISION FROM RIGHT\n";
+                     newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                 }
+            }
+
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && (tag == "corUPRIGHT"))
+            {
+
+                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                 if (intersectX > intersectY) {
+                     std::cout << "COLLISION FROM BOTTOM\n";
+                     newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
+                 }
+                 else {
+                     if (deltaX > 0) {
+                         std::cout << "COLLISION FROM LEFT\n";
+                         newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                     }
+                 }
+            }
+
+            else if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y && (tag == "corUPLEFT"))
+            {
+
+                 // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                    if (intersectX > intersectY) {
                         std::cout << "COLLISION FROM BOTTOM\n";
                         newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
-                
-               
+                    else {
+                        std::cout << "COLLISION FROM RIGHT\n";
+                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
+                    }
             }
-            
+
         }
     }
 
@@ -432,6 +527,10 @@ void Game::render()
     for (auto& ball : balls)
     {
         ball->draw();
+    }
+    for (auto& flag : flags)
+    {
+        flag->draw();
     }
 
     TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 30); // Путь к вашему шрифту, размер шрифта

@@ -37,7 +37,8 @@ public:
         groupColliders,
         groupHole,
         groupBorder,
-        groupBooster
+        groupBooster,
+        groupFlag
     };
 
 
