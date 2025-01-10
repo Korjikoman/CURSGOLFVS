@@ -4,8 +4,9 @@
 #include "SDL_image.h"
 #include <iostream>
 #include <vector>
-
+#include "TextureManager.h"
 class ColliderComponent;
+
 
 class Game
 {
@@ -23,13 +24,23 @@ public:
 
     bool running() { return isRunning; }
 
-    static void AddTile(int srcX, int srcY, int xpos, int ypos);
     static SDL_Renderer* renderer;
     static SDL_Event event;
-    static std::vector<ColliderComponent*> colliders;
     static bool win; // ƒобавл€ем переменную win как статическую
     void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
     void loadLevel(int levelIndex);
+    
+    enum groupLabels : std::size_t
+    {
+        groupMap,
+        groupBall,
+        groupColliders,
+        groupHole,
+        groupBorder,
+        groupBooster
+    };
+
+
 private:
     int counter = 0;
     bool isRunning;

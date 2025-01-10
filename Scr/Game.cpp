@@ -18,7 +18,7 @@ Manager manager;
 SDL_Event Game::event;
 bool Game::win = false; // Инициализация переменной win
 int currentLevel = 1;
-std::vector<ColliderComponent*> Game::colliders;
+
 Mix_Chunk* holeSound = nullptr;
 Mix_Chunk* budaSound = nullptr;
 Uint32 startTime; // Время начала таймера
@@ -33,22 +33,6 @@ auto& hole(manager.addEntity());
 auto& wall(manager.addEntity());
 auto& box(manager.addEntity());
 
-enum groupLabels : std::size_t
-{
-    groupMap,
-    groupBall,
-    groupColliders,
-    groupHole,
-    groupBorder,
-    groupBooster
-};
-
-auto& tile0(manager.addEntity());
-auto& tile1(manager.addEntity());
-auto& tile2(manager.addEntity());
-auto& tilebox1(manager.addEntity());
-auto& tilebox2(manager.addEntity());
-auto& tilebox3(manager.addEntity());
 
 Game::Game()
 {
@@ -104,14 +88,15 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
         std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         isRunning = false;
     }
-    map = new Map();
+    map = new Map("assets/newtileset.png", 1, 32);
 
     startTime = SDL_GetTicks(); // Записываем время начала в миллисекундах
     elapsedTime = 0; // Инициализируем прошедшее время
 
+
     // ecs implementation
 
-    Map::LoadMap("assets/map.map", 30, 19);
+    map->LoadMap("assets/map.map", 30, 19);
 
     newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -123,43 +108,59 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall.addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
     wall.addComponent<SpriteComponent>("assets/borderup.png");
     wall.addComponent<ColliderComponent>("wall");
-    wall.addGroup(groupBorder);
+    wall.addGroup(groupColliders);
 
     // стенка слева 
-    auto& wall1(manager.addEntity());
-    wall1.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
-    wall1.addComponent<SpriteComponent>("assets/borderleft.png");
-    wall1.addComponent<ColliderComponent>("wall");
-    wall1.addGroup(groupBorder);
+    auto& wall2(manager.addEntity());
+    wall2.addComponent<TransformComponent>(0.0f, 32.0f, 566, 32, 1);
+    wall2.addComponent<SpriteComponent>("assets/borderleft.png");
+    wall2.addComponent<ColliderComponent>("wall");
+    wall2.addGroup(groupColliders);
 
     // стенка справа 
-    auto& wall2(manager.addEntity());
-    wall2.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
-    wall2.addComponent<SpriteComponent>("assets/borderright.png");
-    wall2.addComponent<ColliderComponent>("wall");
-    wall2.addGroup(groupBorder);
+    auto& wall3(manager.addEntity());
+    wall3.addComponent<TransformComponent>(928.0f, 32.0f, 566, 32, 1);
+    wall3.addComponent<SpriteComponent>("assets/borderright.png");
+    wall3.addComponent<ColliderComponent>("wall");
+    wall3.addGroup(groupColliders);
 
     // стенка снизу
-    wall.addComponent<TransformComponent>(32.0f, 598.0f, 32, 896, 1);
-    wall.addComponent<SpriteComponent>("assets/borderdown.png");
-    wall.addComponent<ColliderComponent>("wall");
+    auto& wall4(manager.addEntity());
+
+    wall4.addComponent<TransformComponent>(32.0f, 598.0f, 32, 896, 1);
+    wall4.addComponent<SpriteComponent>("assets/borderdown.png");
+    wall4.addComponent<ColliderComponent>("wall");
+    wall4.addGroup(groupColliders);
 
     // 4 квадратика по краям
-    wall.addComponent<TransformComponent>(0.0f, 0.0f, 32, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/border.png");
-    wall.addComponent<ColliderComponent>("wall");
+    auto& wall5(manager.addEntity());
 
-    wall.addComponent<TransformComponent>(928.0f, 598.0f, 32, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/border.png");
-    wall.addComponent<ColliderComponent>("wall");
+    wall5.addComponent<TransformComponent>(0.0f, 0.0f, 32, 32, 1);
+    wall5.addComponent<SpriteComponent>("assets/border.png");
+    wall5.addComponent<ColliderComponent>("wall");
+    wall5.addGroup(groupColliders);
 
-    wall.addComponent<TransformComponent>(928.0f, 0.0f, 32, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/border.png");
-    wall.addComponent<ColliderComponent>("wall");
+    auto& wall6(manager.addEntity());
 
-    wall.addComponent<TransformComponent>(0.0f, 598.0f, 32, 32, 1);
-    wall.addComponent<SpriteComponent>("assets/border.png");
-    wall.addComponent<ColliderComponent>("wall");
+    wall6.addComponent<TransformComponent>(928.0f, 598.0f, 32, 32, 1);
+    wall6.addComponent<SpriteComponent>("assets/border.png");
+    wall6.addComponent<ColliderComponent>("wall");
+    wall6.addGroup(groupColliders);
+
+    auto& wall7(manager.addEntity());
+
+    wall7.addComponent<TransformComponent>(928.0f, 0.0f, 32, 32, 1);
+    wall7.addComponent<SpriteComponent>("assets/border.png");
+    wall7.addComponent<ColliderComponent>("wall");
+    wall7.addGroup(groupColliders);
+
+
+    auto& wall8(manager.addEntity());
+    wall8.addComponent<TransformComponent>(0.0f, 598.0f, 32, 32, 1);
+    wall8.addComponent<SpriteComponent>("assets/border.png");
+    wall8.addComponent<ColliderComponent>("wall");
+    wall8.addGroup(groupColliders);
+
     // 
 
     hole.addComponent<TransformComponent>(800.0f, 500.0f, 40, 40, 1);
@@ -217,116 +218,128 @@ bool Game::getMouseDown() {
 
 
 
-auto& tiles(manager.getGroup(groupMap));
-auto& balls(manager.getGroup(groupBall));
-auto& holes(manager.getGroup(groupHole));
-auto& borders(manager.getGroup(groupBorder));
-auto& boosters(manager.getGroup(groupBooster));
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& balls(manager.getGroup(Game::groupBall));
+auto& holes(manager.getGroup(Game::groupHole));
+auto& borders(manager.getGroup(Game::groupBorder));
+auto& boosters(manager.getGroup(Game::groupBooster));
+
+auto& colliders(manager.getGroup(Game::groupColliders));
 
 
 void Game::update()
 {
+
+    SDL_Rect ballCol = newPlayer.getComponent<ColliderComponent>().collider;
+    Vector2D ballPos = newPlayer.getComponent<TransformComponent>().position;
+
+
     manager.refresh();
     manager.update();
 
-    for (auto cc : colliders)
+    for (auto c : colliders)
     {
-        if (cc->tag != "ball")
-            if (Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc)) {
-                // Получаем коллайдеры
-                SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
-                SDL_Rect* entity = &cc->collider;
-                if (ball->x < entity->x + entity->w &&
-                    ball->x + ball->w > entity->x &&
-                    ball->y < entity->y + entity->h &&
-                    ball->y + ball->h > entity->y &&
-                    cc->tag != "hole" && cc->tag != "dirt" && cc->tag != "sand"
-                    && cc->tag != "boosterright" && cc->tag != "ice")
-                {
+        
+        SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+        std::string tag = c->getComponent<ColliderComponent>().tag;
+        if (Collision::AABB(cCol, ballCol))
+        {
+            // Получаем коллайдеры
+            SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
+            SDL_Rect* entity = &c->getComponent<ColliderComponent>().collider;
+            if (ball->x < entity->x + entity->w &&
+                ball->x + ball->w > entity->x &&
+                ball->y < entity->y + entity->h &&
+                ball->y + ball->h > entity->y &&
+                tag != "hole" && tag != "dirt" && tag != "sand"
+                && tag != "boosterright" && tag != "ice")
+            {
 
-                    // Определяем, с какой стороны произошло столкновение
-                    int ballCenterX = ball->x + ball->w / 2;
-                    int ballCenterY = ball->y + ball->h / 2;
-                    int entityCenterX = entity->x + entity->w / 2;
-                    int entityCenterY = entity->y + entity->h / 2;
+                // Определяем, с какой стороны произошло столкновение
+                int ballCenterX = ball->x + ball->w / 2;
+                int ballCenterY = ball->y + ball->h / 2;
+                int entityCenterX = entity->x + entity->w / 2;
+                int entityCenterY = entity->y + entity->h / 2;
 
-                    int deltaX = ballCenterX - entityCenterX;
-                    int deltaY = ballCenterY - entityCenterY;
+                int deltaX = ballCenterX - entityCenterX;
+                int deltaY = ballCenterY - entityCenterY;
 
-                    int intersectX = (ball->w / 2 + entity->w / 2) - abs(deltaX);
-                    int intersectY = (ball->h / 2 + entity->h / 2) - abs(deltaY);
+                int intersectX = (ball->w / 2 + entity->w / 2) - abs(deltaX);
+                int intersectY = (ball->h / 2 + entity->h / 2) - abs(deltaY);
 
-                    // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
-                    if (intersectX > intersectY) {
-                        if (deltaY > 0) {
-                            std::cout << "COLLISION FROM TOP\n";
-                            newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
-                            newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
-                            newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение
-                        }
-                        else {
-                            std::cout << "COLLISION FROM BOTTOM\n";
-                            newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
-                            newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
-                            newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение
-                        }
+                // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
+                if (intersectX > intersectY) {
+                    if (deltaY > 0) {
+                        std::cout << "COLLISION FROM TOP\n";
+                        newPlayer.getComponent<TransformComponent>().position.y += intersectY + 1; // Смещение вверх
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
                     else {
-                        if (deltaX > 0) {
-                            std::cout << "COLLISION FROM LEFT\n";
-                            newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
-                            newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
-                            newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение
-                        }
-                        else {
-                            std::cout << "COLLISION FROM RIGHT\n";
-                            newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
-                            newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
-                            newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение
-                        }
+                        std::cout << "COLLISION FROM BOTTOM\n";
+                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY + 1; // Смещение вниз
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
-
                 }
-                else if (cc->tag == "hole")
-                {
-                    newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
-                    newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
-                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-                    newPlayer.getComponent<BallMechanic>().strokes = 0;
-                    if (holeSound) {
-                        Mix_PlayChannel(-1, holeSound, 0);
+                else {
+                    if (deltaX > 0) {
+                        std::cout << "COLLISION FROM LEFT\n";
+                        newPlayer.getComponent<TransformComponent>().position.x += intersectX + 1; // Смещение вправо
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
-                    for (auto& tile : tiles)
-                    {
-                        tile->destroy();
+                    else {
+                        std::cout << "COLLISION FROM RIGHT\n";
+                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX + 1; // Смещение влево
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
-                    for (auto& hole : holes) hole->destroy();
-                    tiles.clear();
-                    holes.clear();
-                   
-                    currentLevel++;
-                    loadLevel(currentLevel);
-                }
-                else if (cc->tag == "dirt")
-                {
-                    newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
-                    newPlayer.getComponent<TransformComponent>().velocity.y *= 0.98;
                 }
 
-                else if (cc->tag == "sand")
-                {
-                    newPlayer.getComponent<TransformComponent>().velocity.x *= 0.95;
-                    newPlayer.getComponent<TransformComponent>().velocity.y *= 0.95;
-                }
-
-                else if (cc->tag == "ice")
-                {
-                    
-                }
-               
             }
+            else if (tag == "hole")
+            {
+                newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
+                newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
+                newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+                newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                newPlayer.getComponent<BallMechanic>().strokes = 0;
+                if (holeSound) {
+                    Mix_PlayChannel(-1, holeSound, 0);
+                }
+                for (auto& tile : tiles)
+                {
+                    tile->destroy();
+                }
+                for (auto& hole : holes) hole->destroy();
+                tiles.clear();
+                holes.clear();
+
+                currentLevel++;
+                //loadLevel(currentLevel);
+            }
+            else if (tag == "dirt")
+            {
+                newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
+                newPlayer.getComponent<TransformComponent>().velocity.y *= 0.98;
+            }
+
+            else if (tag == "sand")
+            {
+                newPlayer.getComponent<TransformComponent>().velocity.x *= 0.95;
+                newPlayer.getComponent<TransformComponent>().velocity.y *= 0.95;
+            }
+
+            else if (tag == "ice")
+            {
+
+            }
+
+        }
     }
+
+
 
     elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
@@ -348,6 +361,12 @@ void Game::render()
         border->draw();
     }
     
+    for (auto& c : colliders)
+    {
+        c->draw();
+    }
+
+
     for (auto& hole : holes)
     {
         hole->draw();
@@ -396,12 +415,7 @@ void Game::clean()
     std::cout << "You've exited the game" << std::endl;
 }
 
-void Game::AddTile(int srcX, int srcY, int xpos, int ypos)
-{
-    auto& tile(manager.addEntity());
-    tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, mapfile);
-    tile.addGroup(groupMap);
-}
+
 
 void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y)
 {
@@ -435,10 +449,3 @@ void Game::renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string&
     SDL_DestroyTexture(texture);
 }
 
-
-
-void Game::loadLevel(int level)
-{
-
-    
-}

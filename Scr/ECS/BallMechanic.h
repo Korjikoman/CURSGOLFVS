@@ -5,6 +5,7 @@
 #include <SDL_ttf.h>
 #include <sstream>
 #include "SDL_mixer.h"
+#include "SDL.h"
 
 class BallMechanic : public Component
 {
@@ -71,11 +72,6 @@ public:
 		transform->velocity.y = y;
 	}
 
-	/*void setLaunchedVelocity(float x, float y)
-	{
-		launchedVelocity.x = x;
-		launchedVelocity.y = y;
-	}*/
 
 	void setInitialMousePos(float x, float y)
 	{
