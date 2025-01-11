@@ -333,7 +333,7 @@ void Game::update()
 
                 //for (auto& collider : colliders) collider->destroy();
                 
-
+                // БАГ: коллизия лунки удваивается, level переходит с 1 на 3
                 currentLevel++;
 
                 //loadLevel(currentLevel);
