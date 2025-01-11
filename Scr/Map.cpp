@@ -51,7 +51,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 	std::cout << "\n";
 
 	// генерируем коллизию
-	/*for (int y = 0; y < sizeY; y++)
+	for (int y = 0; y < sizeY; y++)
 	{
 		for (int x = 0; x < sizeX; x++)
 		{
@@ -100,12 +100,18 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 				tcol7.addGroup(Game::groupColliders);
 
 			}
+			if (tile == '8') {
+				auto& tcol8(manager.addEntity());
+				tcol8.addComponent<ColliderComponent>("dirt", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol8.addGroup(Game::groupColliders);
+
+			}
 			
 			mapFile.ignore();
 		}
 		std::cout << "\n";
 
-	}*/
+	}
 
 	mapFile.close();
 }

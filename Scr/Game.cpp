@@ -96,7 +96,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    map->LoadMap("assets/map2.map", 30, 19);
+    map->LoadMap("assets/map1.map", 30, 19);
 
     newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -163,13 +163,13 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // 
 
-    hole.addComponent<TransformComponent>(800.0f, 500.0f, 40, 40, 1);
+    hole.addComponent<TransformComponent>(850.0f, 80.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
     hole.addGroup(groupColliders);
 
     auto& flag(manager.addEntity());
-    hole.addComponent<TransformComponent>(783.0f, 380.0f, 200, 100, 1);
+    hole.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
     hole.addComponent<SpriteComponent>("assets/flag.png");
     hole.addGroup(groupFlag);
 
@@ -275,7 +275,7 @@ void Game::update()
                 ball->x + ball->w > entity->x &&
                 ball->y < entity->y + entity->h &&
                 ball->y + ball->h > entity->y &&
-                tag != "hole" && tag != "dirt" && tag != "sand"
+                tag != "hole" && tag != "sand" && tag != "dirt"
                 && tag != "boosterright" && tag != "ice" && tag != "UPPDOWNER" 
                 && tag != "LEFTRIGHTER" && tag != "corUPLEFT"
                 && tag != "corUPRIGHT" && tag != "corDOWNLEFT"
