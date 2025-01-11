@@ -25,7 +25,7 @@ Uint32 startTime; // Время начала таймера
 float elapsedTime; // Прошедшее время в секундах
 
 
-const char* mapfile = "assets/newtileset.png";
+const char* mapfile = "assets/2tileset.png";
 
 
 auto& newPlayer(manager.addEntity());
@@ -88,7 +88,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
         std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         isRunning = false;
     }
-    map = new Map("assets/newtileset.png", 1, 32);
+    map = new Map("assets/2tileset.png", 1, 32);
 
     startTime = SDL_GetTicks(); // Записываем время начала в миллисекундах
     elapsedTime = 0; // Инициализируем прошедшее время
@@ -96,7 +96,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // ecs implementation
 
-    map->LoadMap("assets/map.map", 30, 19);
+    map->LoadMap("assets/map2.map", 30, 19);
 
     newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -229,7 +229,7 @@ auto& borders(manager.getGroup(Game::groupBorder));
 auto& boosters(manager.getGroup(Game::groupBooster));
 auto& flags(manager.getGroup(Game::groupFlag));
 auto& colliders(manager.getGroup(Game::groupColliders));
-
+auto& walls(manager.getGroup(Game::groupBorder));
 
 void Game::update()
 {
@@ -331,7 +331,11 @@ void Game::update()
                 tiles.clear();
                 holes.clear();
 
+                //for (auto& collider : colliders) collider->destroy();
+                
+
                 currentLevel++;
+
                 //loadLevel(currentLevel);
             }
             else if (tag == "dirt")
@@ -498,7 +502,7 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
- 
+    
 
     for (auto& tile : tiles)
     {

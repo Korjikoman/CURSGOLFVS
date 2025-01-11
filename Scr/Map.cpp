@@ -51,7 +51,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 	std::cout << "\n";
 
 	// генерируем коллизию
-	for (int y = 0; y < sizeY; y++)
+	/*for (int y = 0; y < sizeY; y++)
 	{
 		for (int x = 0; x < sizeX; x++)
 		{
@@ -105,7 +105,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 		}
 		std::cout << "\n";
 
-	}
+	}*/
 
 	mapFile.close();
 }
