@@ -242,7 +242,6 @@ void Game::update()
     manager.update();
 
     bool collisionProcessed = false;
-
     for (auto c : colliders)
     {
         if (collisionProcessed) break;
@@ -315,10 +314,10 @@ void Game::update()
             }
             else if (tag == "hole")
             {
-                newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
-                newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
                 newPlayer.getComponent<TransformComponent>().velocity.x = 0;
                 newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
+                newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
                 newPlayer.getComponent<BallMechanic>().strokes = 0;
                 if (holeSound) {
                     Mix_PlayChannel(-1, holeSound, 0);
@@ -330,12 +329,12 @@ void Game::update()
                 for (auto& hole : holes) hole->destroy();
                 tiles.clear();
                 holes.clear();
-
                 //for (auto& collider : colliders) collider->destroy();
                 
                 // БАГ: коллизия лунки удваивается, level переходит с 1 на 3
                 currentLevel++;
-
+                
+                
                 //loadLevel(currentLevel);
             }
             else if (tag == "dirt")

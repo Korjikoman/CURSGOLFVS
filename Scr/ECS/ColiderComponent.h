@@ -58,7 +58,7 @@ public:
 	{
 		if (tag != "terrain" && tag != "UPPDOWNER" && tag != "LEFTRIGHTER"
 			&& tag != "corUPLEFT" && tag != "corUPRIGHT" && tag != "corDOWNLEFT" 
-			&& tag != "corDOWNRIGHT" && tag != "dirt")
+			&& tag != "corDOWNRIGHT" && tag != "dirt" && tag != "sand")
 		{
 			collider.x = static_cast<int>(transform->position.x);
 			collider.y = static_cast<int>(transform->position.y);

@@ -106,7 +106,12 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 				tcol8.addGroup(Game::groupColliders);
 
 			}
-			
+			if (tile == '9') {
+				auto& tcol9(manager.addEntity());
+				tcol9.addComponent<ColliderComponent>("sand", x * scaledSize, y * scaledSize, tileSize * mapScale);
+				tcol9.addGroup(Game::groupColliders);
+
+			}
 			mapFile.ignore();
 		}
 		std::cout << "\n";
