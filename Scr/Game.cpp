@@ -30,6 +30,8 @@ const char* mapfile = "assets/2tileset.png";
 
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
+auto& flag(manager.addEntity());
+
 auto& wall(manager.addEntity());
 auto& box(manager.addEntity());
 
@@ -162,16 +164,16 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     wall8.addGroup(groupColliders);
 
     // 
-
+    
     hole.addComponent<TransformComponent>(850.0f, 80.0f, 40, 40, 1);
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
     hole.addGroup(groupColliders);
-
-    auto& flag(manager.addEntity());
-    hole.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
-    hole.addComponent<SpriteComponent>("assets/flag.png");
-    hole.addGroup(groupFlag);
+    
+    
+    flag.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
+    flag.addComponent<SpriteComponent>("assets/flag.png");
+    flag.addGroup(groupFlag);
 
 
 
@@ -231,6 +233,8 @@ auto& flags(manager.getGroup(Game::groupFlag));
 auto& colliders(manager.getGroup(Game::groupColliders));
 auto& walls(manager.getGroup(Game::groupBorder));
 
+
+
 void Game::update()
 {
 
@@ -240,7 +244,7 @@ void Game::update()
 
     manager.refresh();
     manager.update();
-
+   
     bool collisionProcessed = false;
     for (auto c : colliders)
     {
@@ -248,12 +252,10 @@ void Game::update()
 
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         std::string tag = c->getComponent<ColliderComponent>().tag;
-        if (Collision::AABB(cCol, ballCol))
+        if (Collision::AABB(newPlayer.getComponent<ColliderComponent>(), c->getComponent<ColliderComponent>()))
         {
             collisionProcessed = true;
-
-            
-
+  
             // Получаем коллайдеры
             SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
             SDL_Rect* entity = &c->getComponent<ColliderComponent>().collider;
@@ -312,31 +314,7 @@ void Game::update()
                 }
 
             }
-            else if (tag == "hole")
-            {
-                newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-                newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-                newPlayer.getComponent<TransformComponent>().position.x = 300.0f;
-                newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
-                newPlayer.getComponent<BallMechanic>().strokes = 0;
-                if (holeSound) {
-                    Mix_PlayChannel(-1, holeSound, 0);
-                }
-                for (auto& tile : tiles)
-                {
-                    tile->destroy();
-                }
-                for (auto& hole : holes) hole->destroy();
-                tiles.clear();
-                holes.clear();
-                //for (auto& collider : colliders) collider->destroy();
-                
-                // БАГ: коллизия лунки удваивается, level переходит с 1 на 3
-                currentLevel++;
-                
-                
-                //loadLevel(currentLevel);
-            }
+            
             else if (tag == "dirt")
             {
                 newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
@@ -487,12 +465,49 @@ void Game::update()
                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
             }
+            else if (tag == "hole")
+            {
+                newPlayer.getComponent<BallMechanic>().strokes = 0;
+                if (holeSound) {
+                    Mix_PlayChannel(-1, holeSound, 0);
+                }
+                for (auto& tile : tiles)
+                {
+                    tile->destroy();
+                }
+                for (auto& col : colliders) {
+                    SDL_Rect coldestroy = col->getComponent<ColliderComponent>().collider;
+                    std::string tagdestroy = col->getComponent<ColliderComponent>().tag;
+                    if (tagdestroy != "wall" && tagdestroy != "hole") col->destroy();
+                }
+                if (currentLevel == 1)
+                {
+                    map->LoadMap("assets/map2.map", 30, 19);
+                }
 
-        }
+                currentLevel++;
+
+                if (currentLevel == 2)
+                {
+                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                    newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+                    newPlayer.getComponent<TransformComponent>().position.y = 550.0f;
+                    hole.getComponent<TransformComponent>().position.x = 870.0f;
+                    hole.getComponent<TransformComponent>().position.y = 500.0f;
+                } 
+                if (currentLevel == 3)
+                {
+                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+                    newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+                    newPlayer.getComponent<TransformComponent>().position.y = 50.0f;
+                    hole.getComponent<TransformComponent>().position.x = 870.0f;
+                    hole.getComponent<TransformComponent>().position.y = 500.0f;
+                }
+            }
+        } 
     }
-
-
-
     elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 

@@ -112,6 +112,8 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 				tcol9.addGroup(Game::groupColliders);
 
 			}
+
+			
 			mapFile.ignore();
 		}
 		std::cout << "\n";

@@ -34,6 +34,7 @@ public:
 
 	float stopThreshold = 0.005f;
 
+
 	std::string to_string(int value) {
 		std::stringstream ss;
 		ss << value;

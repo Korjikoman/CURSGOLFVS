@@ -49,8 +49,8 @@ public:
 		{
 			position.x += velocity.x;
 			position.y += velocity.y;
-			std::cout << "Position (" << position.x << "; " << position.y << " )\n";
-			std::cout << "VELOCITY (" << velocity.x << "; " << velocity.y << " )\n";
+			//std::cout << "Position (" << position.x << "; " << position.y << " )\n";
+			//std::cout << "VELOCITY (" << velocity.x << "; " << velocity.y << " )\n";
 			velocity.x += acceleration.x;
 			velocity.y += acceleration.y;
 		}
