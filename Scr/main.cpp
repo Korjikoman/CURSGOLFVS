@@ -1,6 +1,7 @@
 
 #include "Game.h"
 #include "menu.h"
+#include "InfoWindow.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ SDL_Renderer *renderer = nullptr;
 
 Game *game = nullptr;
 Menu* menu = nullptr;
+InfoWindow* infoWindow = nullptr;
 
 int main(int, char **)
 {
@@ -25,7 +27,7 @@ int main(int, char **)
     bool gameRunning = true;
     while (gameRunning) {
         menu = new Menu();
-        menu->init("Menu", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 350, false);
+        menu->init("CursGolf", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 350, false);
 
         while (menu->isRunning()) {
             menu->handleEvents();
@@ -37,7 +39,7 @@ int main(int, char **)
 
         if (selectedOption == 0) { // Если выбрана "Игра"
             game = new Game();
-            game->init("TUSA", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false);
+            game->init("CursGolf", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             while (game->running()) {
                 frameStart = SDL_GetTicks();
@@ -55,6 +57,17 @@ int main(int, char **)
 
             game->clean();
             delete game;
+        }
+        else if (selectedOption == 2) { // Если выбрана "Info"
+            infoWindow = new InfoWindow();
+            infoWindow->init("Game Info", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 300, false);
+
+            while (infoWindow->isRunning()) {
+                infoWindow->handleEvents();
+                infoWindow->render();
+            }
+
+            delete infoWindow;
         }
         else if (selectedOption == -1 || selectedOption == 3) { // Если выбран "Выход" или окно закрыто
             gameRunning = false;

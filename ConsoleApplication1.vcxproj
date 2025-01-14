@@ -24,6 +24,7 @@
     <ClCompile Include="Scr\ECS\ECS.cpp" />
     <ClCompile Include="Scr\Game.cpp" />
     <ClCompile Include="Scr\Hole.cpp" />
+    <ClCompile Include="Scr\InfoWindow.cpp" />
     <ClCompile Include="Scr\main.cpp" />
     <ClCompile Include="Scr\Map.cpp" />
     <ClCompile Include="Scr\menu.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="Scr\ECS\TileComponent.h" />
     <ClInclude Include="Scr\ECS\TransformComponent.h" />
     <ClInclude Include="Scr\Game.h" />
+    <ClInclude Include="Scr\InfoWindow.h" />
     <ClInclude Include="Scr\Map.h" />
     <ClInclude Include="Scr\menu.h" />
     <ClInclude Include="Scr\TextureManager.h" />

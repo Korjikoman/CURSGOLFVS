@@ -7,6 +7,27 @@
 #include "SDL_mixer.h"
 #include "SDL.h"
 
+class Particle {
+public:
+	Vector2D position;
+	Vector2D velocity;
+	float lifetime; // Время жизни частицы в секундах
+	float size; // Размер частицы
+
+	Particle(float x, float y, float vx, float vy, float lifetime, float size)
+		: position(x, y), velocity(vx, vy), lifetime(lifetime), size(size) {}
+
+	void update(float deltaTime) {
+		position.x += velocity.x * deltaTime;
+		position.y += velocity.y * deltaTime;
+		lifetime -= deltaTime;
+	}
+
+	bool isDead() const {
+		return lifetime <= 0;
+	}
+};
+
 class BallMechanic : public Component
 {
 public:
@@ -28,12 +49,15 @@ public:
 	float velocityY;
 	float velocityLength;
 
+	bool strokesLimitFlag = false;
 	bool win = false;
 	float friction = 0.001;
 	bool isMoving = false;  // Флаг для проверки, что мяч двигается
 
 	float stopThreshold = 0.005f;
+	float stopConst = 0.002f;
 
+	std::vector<std::unique_ptr<Particle>> particles;
 
 	std::string to_string(int value) {
 		std::stringstream ss;
@@ -99,6 +123,8 @@ public:
 
 	void update() override
 	{
+		float deltaTime = 1.0f / 60.0f;
+
 		// Проверяем, двигается ли мяч
 		if (SDL_sqrt(transform->velocity.x * transform->velocity.x + transform->velocity.y * transform->velocity.y) > stopThreshold)
 		{
@@ -108,7 +134,30 @@ public:
 		{
 			isMoving = false;
 		}
+		if (isMoving) {
+			// Генерация новых частиц позади мяча
+			float speed = SDL_sqrt(transform->velocity.x * transform->velocity.x + transform->velocity.y * transform->velocity.y);
+			float particleSize = clamp(8.0f - speed * 1.5f, 2.0f, 8.0f); // Ширина частицы уменьшается с увеличением скорости
+			particles.emplace_back(std::make_unique<Particle>(
+				transform->position.x + 13, // Центр мяча
+				transform->position.y + 13,
+				-transform->velocity.x * 0.5f, // Немного медленнее, чем мяч
+				-transform->velocity.y * 0.5f,
+				0.5f, // Время жизни частицы
+				particleSize
+			));
+		}
 
+		// Обновляем частицы
+		for (auto& particle : particles) {
+			particle->update(deltaTime);
+		}
+
+		// Удаляем мертвые частицы
+		particles.erase(
+			std::remove_if(particles.begin(), particles.end(), [](const std::unique_ptr<Particle>& p) { return p->isDead(); }),
+			particles.end()
+		);
 		if (!isMoving)  // Разрешаем новый удар только если мяч не двигается
 		{
 			int mouseX = 0;
@@ -152,7 +201,7 @@ public:
 					float velocityMagnitude = sqrt(velocityX1 * velocityX1 + velocityY1 * velocityY1);
 
 					// Устанавливаем максимальную скорость
-					const float maxVelocity = 5.0f; // Например, 10.0
+					const float maxVelocity = 5.0f; 
 					if (velocityMagnitude > maxVelocity) {
 						float normalizationFactor = maxVelocity / velocityMagnitude;
 						transform->velocity.x *= normalizationFactor;
@@ -163,8 +212,8 @@ public:
 					transform->speed = SDL_sqrt(SDL_pow(abs(getVelocity().x), 2) + SDL_pow(abs(getVelocity().y), 2));
 
 					// Замедляем шарик при помощи отрицательного ускорения
-					transform->acceleration.x = -transform->velocity.x * 0.002f;
-					transform->acceleration.y = -transform->velocity.y * 0.002f;
+					transform->acceleration.x = -transform->velocity.x * stopConst;
+					transform->acceleration.y = -transform->velocity.y * stopConst;
 
 					// Увеличиваем количество ударов
 					strokes++;
@@ -253,6 +302,11 @@ public:
 			SDL_RenderDrawLine(Game::renderer, static_cast<int>(leftBaseX), static_cast<int>(leftBaseY),
 				static_cast<int>(rightBaseX), static_cast<int>(rightBaseY));
 			
+		}
+		for (const auto& particle : particles) {
+			SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255); // Белый цвет
+			SDL_Rect rect = { static_cast<int>(particle->position.x), static_cast<int>(particle->position.y), static_cast<int>(particle->size), static_cast<int>(particle->size) };
+			SDL_RenderFillRect(Game::renderer, &rect);
 		}
 	}
 

@@ -29,7 +29,8 @@ public:
     static bool win; // ƒобавл€ем переменную win как статическую
     void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
     void loadLevel(int levelIndex);
-    
+    void newLevelStart();
+
     enum groupLabels : std::size_t
     {
         groupMap,

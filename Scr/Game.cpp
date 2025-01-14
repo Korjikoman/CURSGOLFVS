@@ -21,7 +21,7 @@ int currentLevel = 1;
 
 Mix_Chunk* holeSound = nullptr;
 Mix_Chunk* budaSound = nullptr;
-Uint32 startTime; // Время начала таймера
+float startTime; // Время начала таймера
 float elapsedTime; // Прошедшее время в секундах
 
 
@@ -237,6 +237,9 @@ auto& walls(manager.getGroup(Game::groupBorder));
 
 void Game::update()
 {
+    if (newPlayer.getComponent<BallMechanic>().strokes == 17) {
+        newLevelStart();
+    }
 
     SDL_Rect ballCol = newPlayer.getComponent<ColliderComponent>().collider;
     Vector2D ballPos = newPlayer.getComponent<TransformComponent>().position;
@@ -467,50 +470,58 @@ void Game::update()
             }
             else if (tag == "hole")
             {
-                newPlayer.getComponent<BallMechanic>().strokes = 0;
                 if (holeSound) {
                     Mix_PlayChannel(-1, holeSound, 0);
                 }
-                for (auto& tile : tiles)
-                {
-                    tile->destroy();
-                }
-                for (auto& col : colliders) {
-                    SDL_Rect coldestroy = col->getComponent<ColliderComponent>().collider;
-                    std::string tagdestroy = col->getComponent<ColliderComponent>().tag;
-                    if (tagdestroy != "wall" && tagdestroy != "hole") col->destroy();
-                }
-                if (currentLevel == 1)
-                {
-                    map->LoadMap("assets/map2.map", 30, 19);
-                }
-
-                currentLevel++;
-
-                if (currentLevel == 2)
-                {
-                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-                    newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
-                    newPlayer.getComponent<TransformComponent>().position.y = 550.0f;
-                    hole.getComponent<TransformComponent>().position.x = 870.0f;
-                    hole.getComponent<TransformComponent>().position.y = 500.0f;
-                } 
-                if (currentLevel == 3)
-                {
-                    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-                    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-                    newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
-                    newPlayer.getComponent<TransformComponent>().position.y = 50.0f;
-                    hole.getComponent<TransformComponent>().position.x = 870.0f;
-                    hole.getComponent<TransformComponent>().position.y = 500.0f;
-                }
+                newLevelStart();
             }
         } 
     }
     elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 
+void Game::newLevelStart()
+{
+    startTime = SDL_GetTicks();
+    newPlayer.getComponent<BallMechanic>().strokes = 0;
+    
+    for (auto& tile : tiles)
+    {
+        tile->destroy();
+    }
+    for (auto& col : colliders) {
+        SDL_Rect coldestroy = col->getComponent<ColliderComponent>().collider;
+        std::string tagdestroy = col->getComponent<ColliderComponent>().tag;
+        if (tagdestroy != "wall" && tagdestroy != "hole") col->destroy();
+    }
+    if (currentLevel == 1)
+    {
+        map->LoadMap("assets/map2.map", 30, 19);
+    }
+
+    currentLevel++;
+
+    if (currentLevel == 2)
+    {
+        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 550.0f;
+        hole.getComponent<TransformComponent>().position.x = 870.0f;
+        hole.getComponent<TransformComponent>().position.y = 500.0f;
+        flag.getComponent<TransformComponent>().position.x = 872.0f;
+        flag.getComponent<TransformComponent>().position.y = 450.0f;
+    }
+    if (currentLevel == 3)
+    {
+        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 50.0f;
+        hole.getComponent<TransformComponent>().position.x = 870.0f;
+        hole.getComponent<TransformComponent>().position.y = 500.0f;
+    }
+}
 
 
 void Game::render()
@@ -557,9 +568,16 @@ void Game::render()
     }
     std::string strokesText = "Strokes: " + std::to_string(newPlayer.getComponent<BallMechanic>().strokes);
     renderText(renderer, font, strokesText, 33, 0); // Текст в левом верхнем углу
+    if (newPlayer.getComponent<BallMechanic>().strokes == 16) {
+        std::string strokesLimitYesText = "No more strokes, hit to continue";
+        renderText(renderer, font, strokesLimitYesText, 390, 600);
+    }
+
+    std::string strokesLimitText = "Limit - 16";
+    renderText(renderer, font, strokesLimitText, 230, 0);
 
     std::string levelText = "Level: " + std::to_string(currentLevel);
-    renderText(renderer, font, levelText, 900 - 60, 0); 
+    renderText(renderer, font, levelText, 900 - 60, 0);
 
     std::string nameText = "CursGolf";
     renderText(renderer, font, nameText, 900 - 480, 0);
