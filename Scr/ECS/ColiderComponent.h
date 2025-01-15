@@ -43,7 +43,7 @@ public:
 		}
 		transform = &entity->getComponent<TransformComponent>();
 
-		tex = TextureManager::LoadTexture("assets/ColTex.png");
+		//tex = TextureManager::LoadTexture("assets/ColTex.png");
 		srcR = { 0, 0, 32, 32 };
 		destR = { 0, 0, 32, 32 };
 
@@ -65,7 +65,7 @@ public:
 			collider.w = transform->width * transform->scale;
 			collider.h = transform->height * transform->scale;
 		}
-
+		
 		
 		
 		destR.x = collider.x;

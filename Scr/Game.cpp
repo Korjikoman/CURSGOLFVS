@@ -31,6 +31,8 @@ const char* mapfile = "assets/2tileset.png";
 auto& newPlayer(manager.addEntity());
 auto& hole(manager.addEntity());
 auto& flag(manager.addEntity());
+auto& hole1(manager.addEntity());
+auto& flag1(manager.addEntity());
 
 auto& wall(manager.addEntity());
 auto& box(manager.addEntity());
@@ -100,7 +102,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     map->LoadMap("assets/map1.map", 30, 19);
 
-    newPlayer.addComponent<TransformComponent>(100.0f, 100.0f, 32, 32, 1);
+    newPlayer.addComponent<TransformComponent>(85.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
     newPlayer.addComponent<BallMechanic>();
     newPlayer.addComponent<ColliderComponent>("ball");
@@ -494,15 +496,13 @@ void Game::newLevelStart()
         std::string tagdestroy = col->getComponent<ColliderComponent>().tag;
         if (tagdestroy != "wall" && tagdestroy != "hole") col->destroy();
     }
-    if (currentLevel == 1)
-    {
-        map->LoadMap("assets/map2.map", 30, 19);
-    }
+ 
 
     currentLevel++;
 
     if (currentLevel == 2)
     {
+        map->LoadMap("assets/map2.map", 30, 19);
         newPlayer.getComponent<TransformComponent>().velocity.x = 0;
         newPlayer.getComponent<TransformComponent>().velocity.y = 0;
         newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
@@ -514,12 +514,24 @@ void Game::newLevelStart()
     }
     if (currentLevel == 3)
     {
+        map->LoadMap("assets/map3.map", 30, 19);
         newPlayer.getComponent<TransformComponent>().velocity.x = 0;
         newPlayer.getComponent<TransformComponent>().velocity.y = 0;
         newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
-        newPlayer.getComponent<TransformComponent>().position.y = 50.0f;
-        hole.getComponent<TransformComponent>().position.x = 870.0f;
-        hole.getComponent<TransformComponent>().position.y = 500.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
+        hole.getComponent<TransformComponent>().position.x = 770.0f;
+        hole.getComponent<TransformComponent>().position.y = 550.0f;
+        flag.getComponent<TransformComponent>().position.x = 772.0f;
+        flag.getComponent<TransformComponent>().position.y = 500.0f;
+
+        hole1.addComponent<TransformComponent>(770.0f, 50.0f, 40, 40, 1);
+        hole1.addComponent<SpriteComponent>("assets/hole.png");
+        hole1.addComponent<ColliderComponent>("hole");
+        hole1.addGroup(groupColliders);
+
+        flag1.addComponent<TransformComponent>(772.0f, 0.0f, 100, 50, 1);
+        flag1.addComponent<SpriteComponent>("assets/flag.png");
+        flag1.addGroup(groupFlag);
     }
 }
 
