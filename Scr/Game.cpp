@@ -482,47 +482,47 @@ void Game::update()
     elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 
+void Game::loadLevel(const char* mapPath, int playerPositionX, int playerPositionY, int holePositionX, int holePositionY,
+    int flagPositionX, int flagPositionY)
+{
+    map->LoadMap(mapPath, 30, 19);
+    newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+    newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+    newPlayer.getComponent<TransformComponent>().position.x = playerPositionX;
+    newPlayer.getComponent<TransformComponent>().position.y = playerPositionY;
+    hole.getComponent<TransformComponent>().position.x = holePositionX;
+    hole.getComponent<TransformComponent>().position.y = holePositionY;
+    flag.getComponent<TransformComponent>().position.x = flagPositionX;
+    flag.getComponent<TransformComponent>().position.y = flagPositionY;
+}
+
 void Game::newLevelStart()
 {
     startTime = SDL_GetTicks();
     newPlayer.getComponent<BallMechanic>().strokes = 0;
-    
+
     for (auto& tile : tiles)
     {
         tile->destroy();
     }
-    for (auto& col : colliders) {
+    for (auto& col : colliders)
+    {
         SDL_Rect coldestroy = col->getComponent<ColliderComponent>().collider;
         std::string tagdestroy = col->getComponent<ColliderComponent>().tag;
-        if (tagdestroy != "wall" && tagdestroy != "hole") col->destroy();
+        if (tagdestroy != "wall" && tagdestroy != "hole")
+            col->destroy();
     }
- 
 
     currentLevel++;
 
     if (currentLevel == 2)
     {
-        map->LoadMap("assets/map2.map", 30, 19);
-        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
-        newPlayer.getComponent<TransformComponent>().position.y = 550.0f;
-        hole.getComponent<TransformComponent>().position.x = 870.0f;
-        hole.getComponent<TransformComponent>().position.y = 500.0f;
-        flag.getComponent<TransformComponent>().position.x = 872.0f;
-        flag.getComponent<TransformComponent>().position.y = 450.0f;
+        loadLevel("assets/map2.map", 50.0f, 550.0f, 870.0f, 500.0f, 872.0f, 450.0f);
     }
     if (currentLevel == 3)
     {
         map->LoadMap("assets/map3.map", 30, 19);
-        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
-        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
-        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
-        newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
-        hole.getComponent<TransformComponent>().position.x = 770.0f;
-        hole.getComponent<TransformComponent>().position.y = 550.0f;
-        flag.getComponent<TransformComponent>().position.x = 772.0f;
-        flag.getComponent<TransformComponent>().position.y = 500.0f;
+        loadLevel("assets/map3.map", 50.0f, 300.0f, 770.0f, 550.0f, 772.0f, 500.0f);
 
         hole1.addComponent<TransformComponent>(770.0f, 50.0f, 40, 40, 1);
         hole1.addComponent<SpriteComponent>("assets/hole.png");
@@ -534,8 +534,6 @@ void Game::newLevelStart()
         flag1.addGroup(groupFlag);
     }
 }
-
-
 void Game::render()
 {
     SDL_RenderClear(renderer);

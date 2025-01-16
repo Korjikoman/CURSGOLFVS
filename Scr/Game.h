@@ -28,7 +28,8 @@ public:
     static SDL_Event event;
     static bool win; // ƒобавл€ем переменную win как статическую
     void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
-    void loadLevel(int levelIndex);
+    void loadLevel(const char* mapPath, int playerPositionX, int playerPositionY, int holePositionX, int holePositionY,
+        int flagPositionX, int flagPositionY);
     void newLevelStart();
 
     enum groupLabels : std::size_t
