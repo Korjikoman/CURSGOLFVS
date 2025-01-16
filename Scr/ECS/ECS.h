@@ -108,6 +108,34 @@ public:
 		
 	}
 
+	// Новый метод для удаления компонента 
+	template<typename T>
+	void deleteComponent() {
+		static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+
+		if (!hasComponent<T>())
+			return; // Component does not exist, nothing to do
+
+		// Find the component in the components vector
+		auto it = std::find_if(components.begin(), components.end(),
+			[](const std::unique_ptr<Component>& comp) {
+				return dynamic_cast<T*>(comp.get()) != nullptr;
+			});
+
+		if (it != components.end())
+		{
+			// Optionally call a cleanup method before deletion
+			// (*it)->deinit();
+
+			// Erase the component from the vector
+			components.erase(it);
+		}
+
+		// Update componentArray and componentBitSet
+		componentArray[getComponentTypeID<T>()] = nullptr;
+		componentBitSet[getComponentTypeID<T>()] = false;
+	}
+
 private:
 	bool active = true;
 	std::vector<std::unique_ptr<Component>> components;
@@ -122,6 +150,7 @@ private:
 	std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 
 public:
+	Manager();
 	void update()
 	{
 		for (auto& e : entities) e->update();
