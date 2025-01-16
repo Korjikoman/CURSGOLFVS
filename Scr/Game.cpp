@@ -1,13 +1,22 @@
 #include "Game.h"
+#include "TextureManager.h"
+#include "Map.h"
 
+#include <sstream>
+#include "ECS/ECS.h"
+#include "ECS/Components.h"
+#include "Collision.h"
+#include "SDL_ttf.h"
+#include "SDL_mixer.h"
 
+Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
 
 Manager manager;
 SDL_Event Game::event;
-bool Game::win = false;
+bool Game::win = false; // Инициализация переменной win
 int currentLevel = 1;
 
 Mix_Chunk* holeSound = nullptr;
@@ -19,20 +28,21 @@ float elapsedTime; // Прошедшее время в секундах
 const char* mapfile = "assets/2tileset.png";
 
 
+auto& newPlayer(manager.addEntity());
+auto& hole(manager.addEntity());
+auto& flag(manager.addEntity());
+auto& hole1(manager.addEntity());
+auto& flag1(manager.addEntity());
 
-Game::Game() : manager()
+auto& wall(manager.addEntity());
+auto& box(manager.addEntity());
+
+
+Game::Game()
 {
-    newPlayer = &manager.addEntity();
-    hole = &manager.addEntity();
-    hole1 = &manager.addEntity();
-    flag = &manager.addEntity();
-    flag1 = &manager.addEntity();
-    wall = &manager.addEntity();
-    box = &manager.addEntity();
 }
 Game::~Game()
 {
-
 }
 
 void Game::init(const char *title, int x, int y, int width, int height, bool fullscreen)
@@ -92,17 +102,17 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     map->LoadMap("assets/map1.map", 30, 19);
 
-    newPlayer->addComponent<TransformComponent>(85.0f, 100.0f, 32, 32, 1);
-    newPlayer->addComponent<SpriteComponent>("assets/ball.png");
-    newPlayer->addComponent<BallMechanic>();
-    newPlayer->addComponent<ColliderComponent>("ball");
-    newPlayer->addGroup(groupBall);
+    newPlayer.addComponent<TransformComponent>(85.0f, 100.0f, 32, 32, 1);
+    newPlayer.addComponent<SpriteComponent>("assets/ball.png");
+    newPlayer.addComponent<BallMechanic>();
+    newPlayer.addComponent<ColliderComponent>("ball");
+    newPlayer.addGroup(groupBall);
 
     // верхняя стенка
-    wall->addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
-    wall->addComponent<SpriteComponent>("assets/borderup.png");
-    wall->addComponent<ColliderComponent>("wall");
-    wall->addGroup(groupColliders);
+    wall.addComponent<TransformComponent>(32.0f, 0.0f, 32, 896, 1);
+    wall.addComponent<SpriteComponent>("assets/borderup.png");
+    wall.addComponent<ColliderComponent>("wall");
+    wall.addGroup(groupColliders);
 
     // стенка слева 
     auto& wall2(manager.addEntity());
@@ -157,15 +167,15 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
 
     // 
     
-    hole->addComponent<TransformComponent>(850.0f, 80.0f, 40, 40, 1);
-    hole->addComponent<SpriteComponent>("assets/hole.png");
-    hole->addComponent<ColliderComponent>("hole");
-    hole->addGroup(groupColliders);
+    hole.addComponent<TransformComponent>(850.0f, 80.0f, 40, 40, 1);
+    hole.addComponent<SpriteComponent>("assets/hole.png");
+    hole.addComponent<ColliderComponent>("hole");
+    hole.addGroup(groupColliders);
     
     
-    flag->addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
-    flag->addComponent<SpriteComponent>("assets/flag.png");
-    flag->addGroup(groupFlag);
+    flag.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
+    flag.addComponent<SpriteComponent>("assets/flag.png");
+    flag.addGroup(groupFlag);
 
 
 
@@ -229,12 +239,12 @@ auto& walls(manager.getGroup(Game::groupBorder));
 
 void Game::update()
 {
-    if (newPlayer->getComponent<BallMechanic>().strokes == 17) {
+    if (newPlayer.getComponent<BallMechanic>().strokes == 17) {
         newLevelStart();
     }
 
-    SDL_Rect ballCol = newPlayer->getComponent<ColliderComponent>().collider;
-    Vector2D ballPos = newPlayer->getComponent<TransformComponent>().position;
+    SDL_Rect ballCol = newPlayer.getComponent<ColliderComponent>().collider;
+    Vector2D ballPos = newPlayer.getComponent<TransformComponent>().position;
 
 
     manager.refresh();
@@ -247,12 +257,12 @@ void Game::update()
 
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         std::string tag = c->getComponent<ColliderComponent>().tag;
-        if (Collision::AABB(newPlayer->getComponent<ColliderComponent>(), c->getComponent<ColliderComponent>()))
+        if (Collision::AABB(newPlayer.getComponent<ColliderComponent>(), c->getComponent<ColliderComponent>()))
         {
             collisionProcessed = true;
   
             // Получаем коллайдеры
-            SDL_Rect* ball = &newPlayer->getComponent<ColliderComponent>().collider;
+            SDL_Rect* ball = &newPlayer.getComponent<ColliderComponent>().collider;
             SDL_Rect* entity = &c->getComponent<ColliderComponent>().collider;
 
             // Определяем, с какой стороны произошло столкновение
@@ -282,29 +292,29 @@ void Game::update()
                 if (intersectX > intersectY) {
                     if (deltaY > 0) {
                         std::cout << "COLLISION FROM TOP\n";
-                        newPlayer->getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                        newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
                     else {
                         std::cout << "COLLISION FROM BOTTOM\n";
-                        newPlayer->getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
-                        newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
                 }
                 else {
                     if (deltaX > 0) {
                         std::cout << "COLLISION FROM LEFT\n";
-                        newPlayer->getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
-                        newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
                     else {
                         std::cout << "COLLISION FROM RIGHT\n";
-                        newPlayer->getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
-                        newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
                 }
 
@@ -312,14 +322,14 @@ void Game::update()
             
             else if (tag == "dirt")
             {
-                newPlayer->getComponent<TransformComponent>().velocity.x *= 0.98;
-                newPlayer->getComponent<TransformComponent>().velocity.y *= 0.98;
+                newPlayer.getComponent<TransformComponent>().velocity.x *= 0.98;
+                newPlayer.getComponent<TransformComponent>().velocity.y *= 0.98;
             }
 
             else if (tag == "sand")
             {
-                newPlayer->getComponent<TransformComponent>().velocity.x *= 0.95;
-                newPlayer->getComponent<TransformComponent>().velocity.y *= 0.95;
+                newPlayer.getComponent<TransformComponent>().velocity.x *= 0.95;
+                newPlayer.getComponent<TransformComponent>().velocity.y *= 0.95;
             }
 
             else if (tag == "ice")
@@ -337,15 +347,15 @@ void Game::update()
                 
                  if (deltaY > 0) {
                      std::cout << "COLLISION FROM TOP\n";
-                     newPlayer->getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                     newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                  }
                  else {
                      std::cout << "COLLISION FROM BOTTOM\n";
-                     newPlayer->getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
-                     newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                  }
             }
 
@@ -359,15 +369,15 @@ void Game::update()
 
                  if (deltaX > 0) {
                      std::cout << "COLLISION FROM LEFT\n";
-                     newPlayer->getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
-                     newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                  }
                  else {
                      std::cout << "COLLISION FROM RIGHT\n";
-                     newPlayer->getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
-                     newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                  }
             } 
             else if (ball->x < entity->x + entity->w &&
@@ -380,17 +390,17 @@ void Game::update()
                  if (intersectX > intersectY) {
                      if (deltaY > 0) {
                          std::cout << "COLLISION FROM TOP\n";
-                         newPlayer->getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                         newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                         newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                      }
                  }
                  else {
                      if (deltaX > 0) {
                          std::cout << "COLLISION FROM LEFT\n";
-                         newPlayer->getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
-                         newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                         newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                      }
                  }
             }
@@ -404,16 +414,16 @@ void Game::update()
                  if (intersectX > intersectY) {
                      if (deltaY > 0) {
                          std::cout << "COLLISION FROM TOP\n";
-                         newPlayer->getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
-                         newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                         newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().position.y += intersectY; // Смещение вверх
+                         newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                      }
                  }
                  else {
                      std::cout << "COLLISION FROM RIGHT\n";
-                     newPlayer->getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
-                     newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                     newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                  }
             }
 
@@ -426,16 +436,16 @@ void Game::update()
                  // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
                  if (intersectX > intersectY) {
                      std::cout << "COLLISION FROM BOTTOM\n";
-                     newPlayer->getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
-                     newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                     newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                     newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                     newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                  }
                  else {
                      if (deltaX > 0) {
                          std::cout << "COLLISION FROM LEFT\n";
-                         newPlayer->getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
-                         newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                         newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().position.x += intersectX; // Смещение вправо
+                         newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                         newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                      }
                  }
             }
@@ -449,15 +459,15 @@ void Game::update()
                  // Если пересечение по X больше, чем по Y, то столкновение произошло сверху или снизу
                     if (intersectX > intersectY) {
                         std::cout << "COLLISION FROM BOTTOM\n";
-                        newPlayer->getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
-                        newPlayer->getComponent<TransformComponent>().velocity.y *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.y -= intersectY; // Смещение вниз
+                        newPlayer.getComponent<TransformComponent>().velocity.y *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.y *= -1;
                     }
                     else {
                         std::cout << "COLLISION FROM RIGHT\n";
-                        newPlayer->getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
-                        newPlayer->getComponent<TransformComponent>().velocity.x *= -1;
-                        newPlayer->getComponent<TransformComponent>().acceleration.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().position.x -= intersectX; // Смещение влево
+                        newPlayer.getComponent<TransformComponent>().velocity.x *= -1;
+                        newPlayer.getComponent<TransformComponent>().acceleration.x *= -1;
                     }
             }
             else if (tag == "hole")
@@ -472,26 +482,10 @@ void Game::update()
     elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 
-// параметры для загрузки уровня
-void Game::loadLevel(const char* mapPath, int playerPositionX, int playerPositionY, int holePositionX, int holePositionY,
-    int flagPositionX, int flagPositionY
-    )
-{
-    map->LoadMap(mapPath, 30, 19);
-    newPlayer->getComponent<TransformComponent>().velocity.x = 0;
-    newPlayer->getComponent<TransformComponent>().velocity.y = 0;
-    newPlayer->getComponent<TransformComponent>().position.x = playerPositionX;
-    newPlayer->getComponent<TransformComponent>().position.y = playerPositionY;
-    hole->getComponent<TransformComponent>().position.x = holePositionX;
-    hole->getComponent<TransformComponent>().position.y = holePositionY;
-    flag->getComponent<TransformComponent>().position.x = flagPositionX;
-    flag->getComponent<TransformComponent>().position.y = flagPositionY;
-}
-
 void Game::newLevelStart()
 {
     startTime = SDL_GetTicks();
-    newPlayer->getComponent<BallMechanic>().strokes = 0;
+    newPlayer.getComponent<BallMechanic>().strokes = 0;
     
     for (auto& tile : tiles)
     {
@@ -508,21 +502,36 @@ void Game::newLevelStart()
 
     if (currentLevel == 2)
     {
-        loadLevel("assets/map2.map", 50.0f, 550.0f, 870.0f, 500.0f, 872.0f, 450.0f);
+        map->LoadMap("assets/map2.map", 30, 19);
+        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 550.0f;
+        hole.getComponent<TransformComponent>().position.x = 870.0f;
+        hole.getComponent<TransformComponent>().position.y = 500.0f;
+        flag.getComponent<TransformComponent>().position.x = 872.0f;
+        flag.getComponent<TransformComponent>().position.y = 450.0f;
     }
     if (currentLevel == 3)
     {
         map->LoadMap("assets/map3.map", 30, 19);
-        loadLevel("assets/map3.map", 50.0f, 300.0f, 770.0f, 550.0f, 772.0f, 500.0f);
+        newPlayer.getComponent<TransformComponent>().velocity.x = 0;
+        newPlayer.getComponent<TransformComponent>().velocity.y = 0;
+        newPlayer.getComponent<TransformComponent>().position.x = 50.0f;
+        newPlayer.getComponent<TransformComponent>().position.y = 300.0f;
+        hole.getComponent<TransformComponent>().position.x = 770.0f;
+        hole.getComponent<TransformComponent>().position.y = 550.0f;
+        flag.getComponent<TransformComponent>().position.x = 772.0f;
+        flag.getComponent<TransformComponent>().position.y = 500.0f;
 
-        hole1->addComponent<TransformComponent>(770.0f, 50.0f, 40, 40, 1);
-        hole1->addComponent<SpriteComponent>("assets/hole.png");
-        hole1->addComponent<ColliderComponent>("hole");
-        hole1->addGroup(groupColliders);
+        hole1.addComponent<TransformComponent>(770.0f, 50.0f, 40, 40, 1);
+        hole1.addComponent<SpriteComponent>("assets/hole.png");
+        hole1.addComponent<ColliderComponent>("hole");
+        hole1.addGroup(groupColliders);
 
-        flag1->addComponent<TransformComponent>(772.0f, 0.0f, 100, 50, 1);
-        flag1->addComponent<SpriteComponent>("assets/flag.png");
-        flag1->addGroup(groupFlag);
+        flag1.addComponent<TransformComponent>(772.0f, 0.0f, 100, 50, 1);
+        flag1.addComponent<SpriteComponent>("assets/flag.png");
+        flag1.addGroup(groupFlag);
     }
 }
 
@@ -569,9 +578,9 @@ void Game::render()
     if (!font) {
         std::cerr << "Не удалось загрузить шрифт: " << TTF_GetError() << std::endl;
     }
-    std::string strokesText = "Strokes: " + std::to_string(newPlayer->getComponent<BallMechanic>().strokes);
+    std::string strokesText = "Strokes: " + std::to_string(newPlayer.getComponent<BallMechanic>().strokes);
     renderText(renderer, font, strokesText, 33, 0); // Текст в левом верхнем углу
-    if (newPlayer->getComponent<BallMechanic>().strokes == 16) {
+    if (newPlayer.getComponent<BallMechanic>().strokes == 16) {
         std::string strokesLimitYesText = "No more strokes, hit to continue";
         renderText(renderer, font, strokesLimitYesText, 390, 600);
     }
@@ -600,7 +609,6 @@ void Game::render()
 
 void Game::clean()
 {
-
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     Mix_CloseAudio();

@@ -5,19 +5,6 @@
 #include <iostream>
 #include <vector>
 #include "TextureManager.h"
-#include "Vector2D.h"
-#include "ECS/ECS.h"
-#include "ECS/Components.h"
-#include "TextureManager.h"
-#include "Map.h"
-
-#include <sstream>
-
-#include "Collision.h"
-#include "SDL_mixer.h"
-
-
-
 class ColliderComponent;
 
 
@@ -41,8 +28,7 @@ public:
     static SDL_Event event;
     static bool win; // ƒобавл€ем переменную win как статическую
     void renderText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y);
-    void loadLevel(const char* mapPath, int playerPositionX, int playerPositionY, int holePositionX, int holePositionY,
-        int flagPositionX, int flagPositionY);
+    void loadLevel(int levelIndex);
     void newLevelStart();
 
     enum groupLabels : std::size_t
@@ -56,7 +42,6 @@ public:
         groupFlag
     };
 
-    Manager& manager;
 
 private:
     int counter = 0;
@@ -65,14 +50,5 @@ private:
     std::vector<std::string> musicTracks;
     int currentTrackIndex = 0;
     bool isMusicPlaying = false;
-
-    Entity* newPlayer;
-    Entity* hole;
-    Entity* hole1;
-    Entity* flag;
-    Entity* flag1;
-    Entity* wall;
-    Entity* box;
-
 
 };

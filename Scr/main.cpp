@@ -57,7 +57,6 @@ int main(int, char **)
 
             game->clean();
             delete game;
-           
         }
         else if (selectedOption == 2) { // Если выбрана "Info"
             infoWindow = new InfoWindow();
