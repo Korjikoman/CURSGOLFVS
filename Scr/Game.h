@@ -5,6 +5,8 @@
 #include <iostream>
 #include <vector>
 #include "TextureManager.h"
+#include "ECS/ECS.h"
+
 class ColliderComponent;
 
 
@@ -43,6 +45,24 @@ public:
         groupFlag
     };
 
+    Manager manager;
+
+    Entity& newPlayer;
+    Entity& hole;
+    Entity& hole1;
+    Entity& flag;
+    Entity& flag1;
+    Entity& wall;
+    Entity& box;
+
+    std::vector<Entity*, std::allocator<Entity*>>& tiles;
+    std::vector<Entity*, std::allocator<Entity*>>& balls;
+    std::vector<Entity*, std::allocator<Entity*>>& holes;
+    std::vector<Entity*, std::allocator<Entity*>>& borders;
+    std::vector<Entity*, std::allocator<Entity*>>& boosters;
+    std::vector<Entity*, std::allocator<Entity*>>& flagss;
+    std::vector<Entity*, std::allocator<Entity*>>& colliders;
+    std::vector<Entity*, std::allocator<Entity*>>& walls;
 
 private:
     int counter = 0;
@@ -51,5 +71,8 @@ private:
     std::vector<std::string> musicTracks;
     int currentTrackIndex = 0;
     bool isMusicPlaying = false;
+
+   
+
 
 };

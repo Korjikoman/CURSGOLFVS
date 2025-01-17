@@ -35,6 +35,7 @@ public:
 	void setTex(const char* path)
 	{
 		texture = TextureManager::LoadTexture(path);
+		std::cout << "Added TEXTURE COMPONENT\n";
 	}
 
 	void update() override

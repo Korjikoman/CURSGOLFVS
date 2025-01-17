@@ -46,7 +46,7 @@ public:
 		//tex = TextureManager::LoadTexture("assets/ColTex.png");
 		srcR = { 0, 0, 32, 32 };
 		destR = { 0, 0, 32, 32 };
-
+		std::cout << "Added COLLIDER COMPONENT\n";
 	}
 
 	void draw() override

@@ -79,6 +79,7 @@ public:
 		if (!swingSound) {
 			std::cerr << "Failed to load swing sound! SDL_mixer Error: " << Mix_GetError() << std::endl;
 		}
+		std::cout << "Added BALL MECHANIC COMPONENT\n";
 	}
 
 	Vector2D& getVelocity()

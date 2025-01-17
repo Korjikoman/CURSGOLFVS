@@ -122,6 +122,7 @@ private:
 	std::array<std::vector<Entity*>, maxGroups> groupedEntities;
 
 public:
+	Manager();
 	void update()
 	{
 		for (auto& e : entities) e->update();

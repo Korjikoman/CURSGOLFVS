@@ -3,7 +3,6 @@
 #include "Map.h"
 
 #include <sstream>
-#include "ECS/ECS.h"
 #include "ECS/Components.h"
 #include "Collision.h"
 #include "SDL_ttf.h"
@@ -28,18 +27,26 @@ float elapsedTime; // Прошедшее время в секундах
 const char* mapfile = "assets/2tileset.png";
 
 
-auto& newPlayer(manager.addEntity());
-auto& hole(manager.addEntity());
-auto& flag(manager.addEntity());
-auto& hole1(manager.addEntity());
-auto& flag1(manager.addEntity());
-
-auto& wall(manager.addEntity());
-auto& box(manager.addEntity());
-
-
 Game::Game()
+    : 
+    newPlayer(manager.addEntity()),
+    hole(manager.addEntity()),
+    hole1(manager.addEntity()),
+    flag(manager.addEntity()),
+    flag1(manager.addEntity()),
+    wall(manager.addEntity()),
+    box(manager.addEntity()),
+    tiles(manager.getGroup(Game::groupMap)),
+balls(manager.getGroup(Game::groupBall)),
+holes(manager.getGroup(Game::groupHole)),
+borders(manager.getGroup(Game::groupBorder)),
+boosters(manager.getGroup(Game::groupBooster)),
+flagss(manager.getGroup(Game::groupFlag)),
+colliders(manager.getGroup(Game::groupColliders)),
+walls(manager.getGroup(Game::groupBorder))
+    
 {
+  
 }
 Game::~Game()
 {
@@ -47,6 +54,9 @@ Game::~Game()
 
 void Game::init(const char *title, int x, int y, int width, int height, bool fullscreen)
 {
+
+    
+
     int flags = 0;
     if (fullscreen)
     {
@@ -171,12 +181,20 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     hole.addComponent<SpriteComponent>("assets/hole.png");
     hole.addComponent<ColliderComponent>("hole");
     hole.addGroup(groupColliders);
-    
-    
+       
     flag.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
     flag.addComponent<SpriteComponent>("assets/flag.png");
     flag.addGroup(groupFlag);
 
+
+    tiles= manager.getGroup(Game::groupMap);
+    balls = manager.getGroup(Game::groupBall);
+    holes = manager.getGroup(Game::groupHole);
+    borders = manager.getGroup(Game::groupBorder);
+    boosters = manager.getGroup(Game::groupBooster);
+    flagss = manager.getGroup(Game::groupFlag);
+    colliders = manager.getGroup(Game::groupColliders);
+    walls = manager.getGroup(Game::groupBorder);
 
 
 }
@@ -226,15 +244,14 @@ bool Game::getMouseDown() {
 
 
 
-auto& tiles(manager.getGroup(Game::groupMap));
-auto& balls(manager.getGroup(Game::groupBall));
-auto& holes(manager.getGroup(Game::groupHole));
-auto& borders(manager.getGroup(Game::groupBorder));
-auto& boosters(manager.getGroup(Game::groupBooster));
-auto& flags(manager.getGroup(Game::groupFlag));
-auto& colliders(manager.getGroup(Game::groupColliders));
-auto& walls(manager.getGroup(Game::groupBorder));
-
+//auto& tiles(manager.getGroup(Game::groupMap));
+//auto& balls(manager.getGroup(Game::groupBall));
+//auto& holes(manager.getGroup(Game::groupHole));
+//auto& borders(manager.getGroup(Game::groupBorder));
+//auto& boosters(manager.getGroup(Game::groupBooster));
+//auto& flags(manager.getGroup(Game::groupFlag));
+//auto& colliders(manager.getGroup(Game::groupColliders));
+//auto& walls(manager.getGroup(Game::groupBorder));
 
 
 void Game::update()
@@ -567,7 +584,7 @@ void Game::render()
     {
         ball->draw();
     }
-    for (auto& flag : flags)
+    for (auto& flag : flagss)
     {
         flag->draw();
     }

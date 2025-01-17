@@ -20,6 +20,7 @@ public:
 	TransformComponent() 
 	{
 		position.Zero();
+		std::cout << "Added TRANFORM COMPONENT\n";
 	}
 
 	TransformComponent(int sc) 
