@@ -533,6 +533,19 @@ void Game::newLevelStart()
         flag1.addComponent<SpriteComponent>("assets/flag.png");
         flag1.addGroup(groupFlag);
     }
+    if (currentLevel == 4)
+    {
+        hole1.destroy();
+        flag1.destroy();
+        map->LoadMap("assets/map4.map", 30, 19);
+        loadLevel("assets/map4.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
+    }
+    if (currentLevel == 5)
+    {
+        map->LoadMap("assets/map5.map", 30, 19);
+        loadLevel("assets/map5.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
+
+    }
 }
 void Game::render()
 {
@@ -607,6 +620,7 @@ void Game::render()
 
 void Game::clean()
 {
+    currentLevel = 1;
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
     Mix_CloseAudio();
