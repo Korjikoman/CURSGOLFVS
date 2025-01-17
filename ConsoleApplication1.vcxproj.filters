@@ -27,15 +27,6 @@
     <ClCompile Include="Scr\Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scr\Ball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scr\Tile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scr\Hole.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scr\Vector2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -62,9 +53,6 @@
     <ClInclude Include="Scr\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\Tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scr\ECS\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,9 +74,6 @@
     <ClInclude Include="Scr\ECS\ColiderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\ECS\Hole.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scr\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -96,12 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scr\menu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scr\ECS\BallAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scr\ECS\KeyboardController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scr\InfoWindow.h">

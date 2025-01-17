@@ -29,22 +29,21 @@ const char* mapfile = "assets/2tileset.png";
 
 Game::Game()
     : 
+    tiles(manager.getGroup(Game::groupMap)),
+    balls(manager.getGroup(Game::groupBall)),
+    holes(manager.getGroup(Game::groupHole)),
+    borders(manager.getGroup(Game::groupBorder)),
+    boosters(manager.getGroup(Game::groupBooster)),
+    flagss(manager.getGroup(Game::groupFlag)),
+    colliders(manager.getGroup(Game::groupColliders)),
+    walls(manager.getGroup(Game::groupBorder)),
     newPlayer(manager.addEntity()),
     hole(manager.addEntity()),
     hole1(manager.addEntity()),
     flag(manager.addEntity()),
     flag1(manager.addEntity()),
     wall(manager.addEntity()),
-    box(manager.addEntity()),
-    tiles(manager.getGroup(Game::groupMap)),
-balls(manager.getGroup(Game::groupBall)),
-holes(manager.getGroup(Game::groupHole)),
-borders(manager.getGroup(Game::groupBorder)),
-boosters(manager.getGroup(Game::groupBooster)),
-flagss(manager.getGroup(Game::groupFlag)),
-colliders(manager.getGroup(Game::groupColliders)),
-walls(manager.getGroup(Game::groupBorder))
-    
+    box(manager.addEntity())
 {
   
 }
@@ -111,6 +110,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     // ecs implementation
 
     map->LoadMap("assets/map1.map", 30, 19);
+    
 
     newPlayer.addComponent<TransformComponent>(85.0f, 100.0f, 32, 32, 1);
     newPlayer.addComponent<SpriteComponent>("assets/ball.png");
@@ -186,17 +186,6 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     flag.addComponent<SpriteComponent>("assets/flag.png");
     flag.addGroup(groupFlag);
 
-
-    tiles= manager.getGroup(Game::groupMap);
-    balls = manager.getGroup(Game::groupBall);
-    holes = manager.getGroup(Game::groupHole);
-    borders = manager.getGroup(Game::groupBorder);
-    boosters = manager.getGroup(Game::groupBooster);
-    flagss = manager.getGroup(Game::groupFlag);
-    colliders = manager.getGroup(Game::groupColliders);
-    walls = manager.getGroup(Game::groupBorder);
-
-
 }
 bool mouseDown = false;
 bool mousePressed = false;
@@ -256,6 +245,17 @@ bool Game::getMouseDown() {
 
 void Game::update()
 {
+
+
+
+    /*tiles = manager.getGroup(Game::groupMap);
+    balls = manager.getGroup(Game::groupBall);
+    holes = manager.getGroup(Game::groupHole);
+    borders = manager.getGroup(Game::groupBorder);
+    boosters = manager.getGroup(Game::groupBooster);
+    flagss = manager.getGroup(Game::groupFlag);
+    colliders = manager.getGroup(Game::groupColliders);
+    walls = manager.getGroup(Game::groupBorder);*/
     if (newPlayer.getComponent<BallMechanic>().strokes == 17) {
         newLevelStart();
     }

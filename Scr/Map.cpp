@@ -119,7 +119,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 		std::cout << "\n";
 
 	}
-
+	std::cout << "Map generated\n";
 	mapFile.close();
 }
 
