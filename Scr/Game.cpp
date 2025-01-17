@@ -13,7 +13,7 @@ SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
 
-Manager manager;
+
 SDL_Event Game::event;
 bool Game::win = false; // Инициализация переменной win
 int currentLevel = 1;
@@ -27,16 +27,17 @@ float elapsedTime; // Прошедшее время в секундах
 const char* mapfile = "assets/2tileset.png";
 
 
+
 Game::Game()
     : 
-    tiles(manager.getGroup(Game::groupMap)),
-    balls(manager.getGroup(Game::groupBall)),
-    holes(manager.getGroup(Game::groupHole)),
-    borders(manager.getGroup(Game::groupBorder)),
-    boosters(manager.getGroup(Game::groupBooster)),
-    flagss(manager.getGroup(Game::groupFlag)),
-    colliders(manager.getGroup(Game::groupColliders)),
-    walls(manager.getGroup(Game::groupBorder)),
+    tiles(manager.getGroup(groupMap)),
+    balls(manager.getGroup(groupBall)),
+    holes(manager.getGroup(groupHole)),
+    borders(manager.getGroup(groupBorder)),
+    boosters(manager.getGroup(groupBooster)),
+    flagss(manager.getGroup(groupFlag)),
+    colliders(manager.getGroup(groupColliders)),
+    walls(manager.getGroup(groupBorder)),
     newPlayer(manager.addEntity()),
     hole(manager.addEntity()),
     hole1(manager.addEntity()),
@@ -45,7 +46,6 @@ Game::Game()
     wall(manager.addEntity()),
     box(manager.addEntity())
 {
-  
 }
 Game::~Game()
 {
@@ -101,7 +101,7 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
         std::cerr << "SDL_ttf initialization failed: " << TTF_GetError() << std::endl;
         isRunning = false;
     }
-    map = new Map("assets/2tileset.png", 1, 32);
+    map = new Map(manager, "assets/2tileset.png", 1, 32);
 
     startTime = SDL_GetTicks(); // Записываем время начала в миллисекундах
     elapsedTime = 0; // Инициализируем прошедшее время
@@ -233,29 +233,12 @@ bool Game::getMouseDown() {
 
 
 
-//auto& tiles(manager.getGroup(Game::groupMap));
-//auto& balls(manager.getGroup(Game::groupBall));
-//auto& holes(manager.getGroup(Game::groupHole));
-//auto& borders(manager.getGroup(Game::groupBorder));
-//auto& boosters(manager.getGroup(Game::groupBooster));
-//auto& flags(manager.getGroup(Game::groupFlag));
-//auto& colliders(manager.getGroup(Game::groupColliders));
-//auto& walls(manager.getGroup(Game::groupBorder));
+
 
 
 void Game::update()
 {
 
-
-
-    /*tiles = manager.getGroup(Game::groupMap);
-    balls = manager.getGroup(Game::groupBall);
-    holes = manager.getGroup(Game::groupHole);
-    borders = manager.getGroup(Game::groupBorder);
-    boosters = manager.getGroup(Game::groupBooster);
-    flagss = manager.getGroup(Game::groupFlag);
-    colliders = manager.getGroup(Game::groupColliders);
-    walls = manager.getGroup(Game::groupBorder);*/
     if (newPlayer.getComponent<BallMechanic>().strokes == 17) {
         newLevelStart();
     }

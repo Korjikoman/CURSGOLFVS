@@ -6,7 +6,7 @@
 extern Manager manager;
 
 
-Map::Map(const char* mfp, int ms, int ts) : mapFilePath(mfp), mapScale(ms), tileSize(ts)
+Map::Map(Manager& manager, const char* mfp, int ms, int ts) : manager(manager), mapFilePath(mfp), mapScale(ms), tileSize(ts)
 {
 	scaledSize = ms * ts;
 }
@@ -59,25 +59,25 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 			std::cout << tile;
 
 			if (tile == '1') {
-				auto& tcol(manager.addEntity());
+				Entity& tcol(manager.addEntity());
 				tcol.addComponent<ColliderComponent>("terrain", x*scaledSize, y * scaledSize, tileSize * mapScale);
 				tcol.addGroup(Game::groupColliders);
 				
 			}
 			if (tile == '2') {
-				auto& tcol2(manager.addEntity());
+				Entity& tcol2(manager.addEntity());
 				tcol2.addComponent<ColliderComponent>("UPPDOWNER", x * scaledSize, y * scaledSize, tileSize * mapScale);
 				tcol2.addGroup(Game::groupColliders);
 
 			}
 			if (tile == '3') {
-				auto& tcol3(manager.addEntity());
+				Entity& tcol3(manager.addEntity());
 				tcol3.addComponent<ColliderComponent>("LEFTRIGHTER", x * scaledSize, y * scaledSize, tileSize * mapScale);
 				tcol3.addGroup(Game::groupColliders);
 
 			}
 			if (tile == '4') {
-				auto& tcol4(manager.addEntity());
+				Entity& tcol4(manager.addEntity());
 				tcol4.addComponent<ColliderComponent>("corUPLEFT", x * scaledSize, y * scaledSize, tileSize * mapScale);
 				tcol4.addGroup(Game::groupColliders);
 
@@ -126,7 +126,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
 void Map::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
-	auto& tile(manager.addEntity());
+	Entity& tile(manager.addEntity());
 	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos,tileSize,mapScale, mapFilePath);
 	tile.addGroup(Game::groupMap);
 

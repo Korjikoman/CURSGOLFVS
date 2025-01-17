@@ -25,6 +25,9 @@ int main(int, char **)
     int frameTime;
 
     bool gameRunning = true;
+
+
+
     while (gameRunning) {
         menu = new Menu();
         menu->init("CursGolf", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 600, 350, false);
