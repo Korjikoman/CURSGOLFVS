@@ -8,11 +8,12 @@
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
 
+#include "RecordManager.h"
+
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
-
 
 SDL_Event Game::event;
 bool Game::win = false; // Инициализация переменной win
@@ -185,6 +186,8 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     flag.addComponent<TransformComponent>(852.0f, 30.0f, 100, 50, 1);
     flag.addComponent<SpriteComponent>("assets/flag.png");
     flag.addGroup(groupFlag);
+
+
 
 }
 bool mouseDown = false;
@@ -475,11 +478,14 @@ void Game::update()
                 if (holeSound) {
                     Mix_PlayChannel(-1, holeSound, 0);
                 }
+                // сюда записываем рекорд по времени
+                // нужен номер уровня и время в секундах 
+                //records->updateRecord(currentLevel, elapsedTime);
                 newLevelStart();
             }
         } 
     }
-    elapsedTime = (SDL_GetTicks() - startTime) / 1000.0f; // Конвертируем в секунды
+    elapsedTime = (SDL_GetTicks64() - startTime) / 1000.0f; // Конвертируем в секунды
 }
 
 void Game::loadLevel(const char* mapPath, int playerPositionX, int playerPositionY, int holePositionX, int holePositionY,

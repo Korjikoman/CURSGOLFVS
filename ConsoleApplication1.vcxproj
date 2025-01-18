@@ -26,6 +26,7 @@
     <ClCompile Include="Scr\main.cpp" />
     <ClCompile Include="Scr\Map.cpp" />
     <ClCompile Include="Scr\menu.cpp" />
+    <ClCompile Include="Scr\RecordManager.cpp" />
     <ClCompile Include="Scr\TextureManager.cpp" />
     <ClCompile Include="Scr\Vector2D.cpp" />
   </ItemGroup>
@@ -42,6 +43,7 @@
     <ClInclude Include="Scr\InfoWindow.h" />
     <ClInclude Include="Scr\Map.h" />
     <ClInclude Include="Scr\menu.h" />
+    <ClInclude Include="Scr\RecordManager.h" />
     <ClInclude Include="Scr\TextureManager.h" />
     <ClInclude Include="Scr\Vector2D.h" />
   </ItemGroup>
@@ -84,6 +86,9 @@
     <Media Include="assets\sfx\charge.mp3" />
     <Media Include="assets\sfx\hole.mp3" />
     <Media Include="assets\sfx\swing.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="assets\records\records.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
