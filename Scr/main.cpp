@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "InfoWindow.h"
 #include "RecordManager.h"
+#include "RecordWindow.h"
 using namespace std;
 
 const int SCREEN_WIDTH = 960;
@@ -15,7 +16,8 @@ SDL_Renderer *renderer = nullptr;
 Game *game = nullptr;
 Menu* menu = nullptr;
 InfoWindow* infoWindow = nullptr;
-RecordManager* records = nullptr;
+RecordWindow* recordWindow = nullptr;
+
 int main(int, char **)
 {
     const int FPS = 144;
@@ -63,14 +65,15 @@ int main(int, char **)
         }
         else if (selectedOption == 1)
         {
-            records = new RecordManager();
-            records->init("assets/records/records.txt", "Records", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,400,300,false);
+            recordWindow = new RecordWindow();
+            recordWindow->init("Game Records", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 400, false);
 
-            while (records->isRunning())
-            {
-                records->handleEvents();
-                records->render(10,10);
+            while (recordWindow->isRunning()) {
+                recordWindow->handleEvents();
+                recordWindow->render();
             }
+
+            delete recordWindow;
         }
         else if (selectedOption == 2) { // Если выбрана "Info"
             infoWindow = new InfoWindow();

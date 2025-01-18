@@ -6,6 +6,7 @@
 #include <vector>
 #include "TextureManager.h"
 #include "ECS/ECS.h"
+#include "RecordManager.cpp"
 
 class ColliderComponent;
 
@@ -71,8 +72,4 @@ private:
     std::vector<std::string> musicTracks;
     int currentTrackIndex = 0;
     bool isMusicPlaying = false;
-
-   
-
-
 };

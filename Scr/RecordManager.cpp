@@ -1,164 +1,61 @@
-#include "RecordManager.h"
-#include <sstream>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <limits>
 
+class RecordManager {
+private:
+    std::vector<int> records;
 
-RecordManager::RecordManager() 
-{
-}
-
-
-
-RecordManager::~RecordManager()
-{
-    TTF_CloseFont(font);
-}
-
-void RecordManager::init(const std::string& recordFilePath, const char* title, int xpos, int ypos, int width, int height,  bool fullscreen)
-{
-
-    int flags = 0;
-    if (fullscreen)
-    {
-        flags = SDL_WINDOW_FULLSCREEN;
+public:
+    RecordManager() {
+        // Инициализация рекордов для 10 уровней, начальное значение - бесконечность
+        records.resize(10, std::numeric_limits<int>::max());
+        loadRecords();
     }
-    
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
-    {
-        TTF_Init();
-        recordsWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-        recordsRenderer = SDL_CreateRenderer(recordsWindow, -1, 0);
-        if (recordsRenderer)
-        {
-            SDL_SetRenderDrawColor(recordsRenderer, 200, 255, 200, 255);
-        }
-        font = TTF_OpenFont("assets/font/font.ttf", 30);
-        if (!font)
-        {
-            std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
-        }
-        running = true;
-        recordsFile = recordFilePath;
 
-        loadRecord();
-
-    }
-    
-}
-
-void RecordManager::loadRecord()
-{
-    std::ifstream file(recordsFile);
-    if (file.is_open())
-    {
-        int level, bestResult;
-        while (file >> level >> bestResult)
-        {
-            bestRecords[level] = bestResult;
-        }
-        file.close();
-    }
-    else
-    {
-        std::cerr << "Record file not found. Starting with empty records." << std::endl;
-    }
-}
-
-void RecordManager::saveRecord()
-{
-    std::ofstream file(recordsFile);
-    if (file.is_open())
-    {
-        for (const auto& pair : bestRecords)
-        {
-            file << pair.first << " " << pair.second << std::endl;
-        }
-        file.close();
-    }
-    else
-    {
-        std::cerr << "Failed to save records to file." << std::endl;
-    }
-}
-
-void RecordManager::updateRecord(int level, int currentScore)
-{
-    if (currentScore > bestRecords[level])
-    {
-        bestRecords[level] = currentScore;
-        saveRecord();
-    }
-}
-
-
-
-void RecordManager::render(int startX, int startY)
-{
-
-    SDL_RenderClear(recordsRenderer);
-
-    SDL_Color textColor = { 255, 255, 255, 255 };
-    SDL_Color whiteColor = { 0, 0, 0 };
-    SDL_Surface* titleSurface = TTF_RenderText_Solid(font, "CursGolf", whiteColor);
-    SDL_Texture* titleTexture = SDL_CreateTextureFromSurface(recordsRenderer, titleSurface);
-    
-    SDL_Rect titleRect;
-    titleRect.x = 250;
-    titleRect.y = 40;
-    titleRect.w = titleSurface->w;
-    titleRect.h = titleSurface->h;
-
-    int lineSkip = TTF_FontLineSkip(font);
-
-    SDL_FreeSurface(titleSurface);
-    SDL_RenderCopy(recordsRenderer, titleTexture, NULL, &titleRect);
-    SDL_DestroyTexture(titleTexture);
-    
-   // считываем рекорды из файла и выводим их на экран
-    for (const auto& pair : bestRecords)
-    {
-        std::stringstream ss;
-        ss << "Level " << pair.first << ": " << pair.second;
-        std::string textStr = ss.str(); 
-        const char* text = textStr.c_str(); 
-        
-
-        SDL_Surface* surfaceText = TTF_RenderText_Solid(font, text, textColor);
-        SDL_Texture* texture = SDL_CreateTextureFromSurface(recordsRenderer, surfaceText);
-        
-        
-        if (texture)
-        {
-            SDL_Rect destRect = { startX, startY, 0, 0 };
-            SDL_QueryTexture(texture, nullptr, nullptr, &destRect.w, &destRect.h);
-            SDL_RenderCopy(recordsRenderer, texture, nullptr, &destRect);
-            SDL_DestroyTexture(texture);
-            startY += lineSkip;
+    // Загрузка рекордов из файла
+    void loadRecords() {
+        std::ifstream file("assets/records/records.txt");
+        if (file.is_open()) {
+            std::string line;
+            int level = 0;
+            while (std::getline(file, line) && level < 10) {
+                records[level] = std::stoi(line);
+                level++;
+            }
+            file.close();
         }
     }
 
-    SDL_RenderPresent(recordsRenderer);
+    // Сохранение рекордов в файл
+    void saveRecords() {
+        std::ofstream file("assets/records/records.txt");
+        if (file.is_open()) {
+            for (int i = 0; i < 10; i++) {
+                file << records[i] << "\n";
+            }
+            file.close();
+        }
+    }
 
-}
+    // Получить рекорд для определенного уровня
+    int getRecord(int level) const {
+        if (level >= 1 && level <= 10) {
+            return records[level - 1];
+        }
+        return std::numeric_limits<int>::max();
+    }
 
-void RecordManager::handleEvents()
-{
-    
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-        case SDL_QUIT:
-            selectedOption = -1; // Устанавливаем опцию -1, чтобы отличить закрытие окна
-            running = false;
-            break;
-        case SDL_KEYDOWN:
-            switch (event.key.keysym.sym) {
-  
-            case SDLK_RETURN:
-                running = false;
-                break;
+    // Установить новый рекорд для определенного уровня
+    void setRecord(int level, int strokes) {
+        if (level >= 1 && level <= 10) {
+            if (strokes < records[level - 1]) {
+                records[level - 1] = strokes;
+                saveRecords();  // Перезаписываем файл с новыми рекордами
             }
         }
     }
-    
-}
+};

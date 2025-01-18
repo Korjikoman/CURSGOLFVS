@@ -14,7 +14,7 @@ Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
 
 Map* map;
-
+RecordManager recordManager;
 SDL_Event Game::event;
 bool Game::win = false; // »нициализаци€ переменной win
 int currentLevel = 1;
@@ -478,9 +478,9 @@ void Game::update()
                 if (holeSound) {
                     Mix_PlayChannel(-1, holeSound, 0);
                 }
-                // сюда записываем рекорд по времени
-                // нужен номер уровн€ и врем€ в секундах 
-                //records->updateRecord(currentLevel, elapsedTime);
+                if (newPlayer.getComponent<BallMechanic>().strokes < recordManager.getRecord(currentLevel)) {
+                    recordManager.setRecord(currentLevel, newPlayer.getComponent<BallMechanic>().strokes);  // ”станавливаем новый рекорд
+                }
                 newLevelStart();
             }
         } 
@@ -619,6 +619,10 @@ void Game::render()
 
     std::string escText = "esc for exit";
     renderText(renderer, font, escText, 32, 596);
+
+    //recordManager.loadRecords();
+    std::string recordText = "Record: " + std::to_string(recordManager.getRecord(currentLevel));
+    renderText(renderer, font, recordText, 820, 596);  // ѕозици€ в правом нижнем углу
 
     std::ostringstream timerStream;
     timerStream.precision(1);

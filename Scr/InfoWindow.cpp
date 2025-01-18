@@ -43,7 +43,9 @@ void InfoWindow::init(const char* title, int xpos, int ypos, int width, int heig
 void InfoWindow::handleEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN)) {
+        if (event.type == SDL_QUIT ||
+            (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_RETURN) ||
+            (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
             running = false;
         }
     }
