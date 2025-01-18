@@ -187,7 +187,12 @@ void Game::init(const char *title, int x, int y, int width, int height, bool ful
     flag.addComponent<SpriteComponent>("assets/flag.png");
     flag.addGroup(groupFlag);
 
-
+    font = TTF_OpenFont("assets/font/font.ttf", 30);  
+    if (!font) {
+        std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
+        isRunning = false; 
+        return;
+    }
 
 }
 bool mouseDown = false;
@@ -597,10 +602,7 @@ void Game::render()
         flag->draw();
     }
 
-    TTF_Font* font = TTF_OpenFont("assets/font/font.ttf", 30); // Путь к вашему шрифту, размер шрифта
-    if (!font) {
-        std::cerr << "Не удалось загрузить шрифт: " << TTF_GetError() << std::endl;
-    }
+   
     std::string strokesText = "Strokes: " + std::to_string(newPlayer.getComponent<BallMechanic>().strokes);
     renderText(renderer, font, strokesText, 33, 0); // Текст в левом верхнем углу
     if (newPlayer.getComponent<BallMechanic>().strokes == 16) {
@@ -641,6 +643,9 @@ void Game::clean()
     SDL_DestroyRenderer(renderer);
     Mix_CloseAudio();
     SDL_Quit();
+    if (font) {
+        TTF_CloseFont(font);
+    }
     std::cout << "You've exited the game" << std::endl;
 }
 

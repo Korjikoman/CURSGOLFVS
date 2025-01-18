@@ -17,7 +17,6 @@ public:
     Game();
     ~Game();
     void init(const char *title, int x, int y, int width, int height, bool fullscreen);
-
     void handleEvents();
     bool getMousePressed();
     bool getMouseDown();
@@ -72,4 +71,6 @@ private:
     std::vector<std::string> musicTracks;
     int currentTrackIndex = 0;
     bool isMusicPlaying = false;
+
+    TTF_Font* font = nullptr;
 };
