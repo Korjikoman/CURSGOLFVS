@@ -546,6 +546,12 @@ void Game::newLevelStart()
         loadLevel("assets/map5.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
 
     }
+    if (currentLevel == 6)
+    {
+        map->LoadMap("assets/map6.map", 30, 19);
+        loadLevel("assets/map6.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
+
+    }
 }
 void Game::render()
 {
