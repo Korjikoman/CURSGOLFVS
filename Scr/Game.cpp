@@ -563,6 +563,24 @@ void Game::newLevelStart()
         loadLevel("assets/map6.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
 
     }
+    if (currentLevel == 7)
+    {
+        map->LoadMap("assets/map7.map", 30, 19);
+        loadLevel("assets/map7.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+
+    }
+    if (currentLevel == 8)
+    {
+        map->LoadMap("assets/map8.map", 30, 19);
+        loadLevel("assets/map8.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+
+    }
+    if (currentLevel == 9)
+    {
+        map->LoadMap("assets/map9.map", 30, 19);
+        loadLevel("assets/map9.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+
+    }
 }
 void Game::render()
 {
