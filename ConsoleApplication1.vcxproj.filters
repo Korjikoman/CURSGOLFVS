@@ -92,9 +92,6 @@
     <ClInclude Include="Scr\InfoWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scr\RecordManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scr\RecordWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>

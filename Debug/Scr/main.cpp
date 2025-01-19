@@ -2,7 +2,6 @@
 #include "Game.h"
 #include "menu.h"
 #include "InfoWindow.h"
-#include "RecordManager.h"
 #include "RecordWindow.h"
 using namespace std;
 
