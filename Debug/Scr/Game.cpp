@@ -8,7 +8,6 @@
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
 
-#include "RecordManager.h"
 
 Entity* ball;
 SDL_Renderer* Game::renderer = nullptr;
@@ -555,31 +554,44 @@ void Game::newLevelStart()
     {
         map->LoadMap("assets/map5.map", 30, 19);
         loadLevel("assets/map5.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
-
     }
     if (currentLevel == 6)
     {
         map->LoadMap("assets/map6.map", 30, 19);
         loadLevel("assets/map6.map", 130.0f, 540.0f, 800.0f, 550.0f, 802.0f, 500.0f);
-
     }
     if (currentLevel == 7)
     {
         map->LoadMap("assets/map7.map", 30, 19);
         loadLevel("assets/map7.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
-
     }
     if (currentLevel == 8)
     {
         map->LoadMap("assets/map8.map", 30, 19);
         loadLevel("assets/map8.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
-
     }
     if (currentLevel == 9)
     {
         map->LoadMap("assets/map9.map", 30, 19);
         loadLevel("assets/map9.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
-
+    }
+    if (currentLevel == 9)
+    {
+        map->LoadMap("assets/map9.map", 30, 19);
+        loadLevel("assets/map9.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+    }
+    if (currentLevel == 10)
+    {
+        map->LoadMap("assets/map10.map", 30, 19);
+        loadLevel("assets/map10.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+    }
+    if (currentLevel == 11)
+    {
+        currentLevel = 777;
+        map->LoadMap("assets/mapfinish.map", 30, 19);
+        loadLevel("assets/mapfinish.map", 90.0f, 540.0f, 830.0f, 50.0f, 832.0f, 0.0f);
+        hole.destroy();
+        flag.destroy();
     }
 }
 void Game::render()
@@ -601,8 +613,6 @@ void Game::render()
     {
         c->draw();
     }
-
-
     for (auto& hole : holes)
     {
         hole->draw();
@@ -640,7 +650,6 @@ void Game::render()
     std::string escText = "esc for exit";
     renderText(renderer, font, escText, 32, 596);
 
-    //recordManager.loadRecords();
     std::string recordText = "Record: " + std::to_string(recordManager.getRecord(currentLevel));
     renderText(renderer, font, recordText, 820, 596);  // Позиция в правом нижнем углу
 
@@ -649,6 +658,17 @@ void Game::render()
     timerStream << std::fixed << elapsedTime;
     std::string timerText = "Time: " + timerStream.str() + "s";
     renderText(renderer, font, timerText, 620, 0);
+
+    std::string finishtext1 = "Thanks for playing!!!";
+    std::string finishtext2 = "More than 70 hours of work to create";
+    std::string finishtext3 = "Made by Andrey Baldin and Stas Kuchkovskiy";
+    std::string finishtext4 = "escape to exit!!";
+    if (currentLevel == 777) {
+        renderText(renderer, font, finishtext1, 450, 400);
+        renderText(renderer, font, finishtext2, 400, 450);
+        renderText(renderer, font, finishtext3, 400, 500);
+        renderText(renderer, font, finishtext4, 400, 550);
+    }
 
     SDL_RenderPresent(renderer);
 

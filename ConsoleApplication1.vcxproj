@@ -44,7 +44,6 @@
     <ClInclude Include="Scr\InfoWindow.h" />
     <ClInclude Include="Scr\Map.h" />
     <ClInclude Include="Scr\menu.h" />
-    <ClInclude Include="Scr\RecordManager.h" />
     <ClInclude Include="Scr\RecordWindow.h" />
     <ClInclude Include="Scr\TextureManager.h" />
     <ClInclude Include="Scr\Vector2D.h" />
