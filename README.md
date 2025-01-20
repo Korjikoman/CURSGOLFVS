@@ -47,4 +47,13 @@
 - **Зажатие левой кнопки мыши, перемещение курсора, отпускание кнопки** — удар по мячу.
 - **Esc** — выйти из игры, рекордов или информации.
 
+## Демо
+![](https://github.com/Korjikoman/CursGolfVS/blob/master/images_videos_for_readme/ezgif-4-4d5803f4ec.gif)
+
+![](https://github.com/Korjikoman/CursGolfVS/blob/master/images_videos_for_readme/1.png)
+
+![](https://github.com/Korjikoman/CursGolfVS/blob/master/images_videos_for_readme/2.png)
+
+![](https://github.com/Korjikoman/CursGolfVS/blob/master/images_videos_for_readme/3.png)
+
 ## Приятной игры и удачных ударов!
